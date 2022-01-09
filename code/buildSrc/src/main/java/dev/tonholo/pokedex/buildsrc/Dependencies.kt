@@ -52,6 +52,12 @@ object Dependencies {
         object Lifecycle {
             const val runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
         }
+
+        object Navigation {
+            // https://developer.android.com/jetpack/androidx/releases/navigation#kts
+            const val classpath = "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5"
+            const val compose = "androidx.navigation:navigation-compose:2.4.0-rc01"
+        }
     }
 
     object JUnit {

@@ -5,6 +5,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -70,6 +71,8 @@ dependencies {
 
     implementation(Dependencies.Retrofit.retrofit)
     implementation(Dependencies.Retrofit.gsonConverter)
+
+    implementation(Dependencies.Jetpack.Navigation.compose)
 
     // region [ Test dependencies ]
     testImplementation(Dependencies.JUnit.junit)

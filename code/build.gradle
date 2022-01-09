@@ -10,6 +10,7 @@ buildscript {
         classpath Dependencies.ClassPath.androidGradlePlugin
         classpath Dependencies.ClassPath.kotlinPlugin
         classpath Dependencies.ClassPath.hiltPlugin
+        classpath Dependencies.Jetpack.Navigation.classpath
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
