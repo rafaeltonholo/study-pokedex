@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import dev.tonholo.study.pokedex.screens.pokemonList.PokemonListScreen
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
 
 @AndroidEntryPoint
@@ -25,7 +26,7 @@ class MainActivity : ComponentActivity() {
                     startDestination = Routes.PokemonList.route,
                 ) {
                     composable(Routes.PokemonList.route) {
-
+                        PokemonListScreen(navController)
                     }
                     composable(
                         route = Routes.PokemonDetails.route,

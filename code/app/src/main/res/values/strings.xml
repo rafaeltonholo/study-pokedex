@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Pokedex App</string>
+    <string name="pokemon_logo_content_description">
+        The Pokemon brand logo
+    </string>
+    <string name="pokemon_list_search_bar_hint">Search by Pokemon name or id…</string>
 </resources>
