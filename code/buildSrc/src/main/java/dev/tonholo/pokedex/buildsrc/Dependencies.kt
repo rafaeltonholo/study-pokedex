@@ -59,6 +59,13 @@ object Dependencies {
         const val junit = "junit:junit:$version"
     }
 
+    object Retrofit {
+        // https://github.com/square/retrofit/tags
+        private const val version = "2.9.0"
+        const val retrofit = "com.squareup.retrofit2:retrofit:$version"
+        const val gsonConverter = "com.squareup.retrofit2:converter-gson:$version"
+    }
+
     object Test {
         private const val version = "1.3.0"
         const val runner = "androidx.test:runner:$version"

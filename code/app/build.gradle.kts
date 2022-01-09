@@ -68,6 +68,9 @@ dependencies {
     implementation(Dependencies.Jetpack.Hilt.hilt)
     kapt(Dependencies.Jetpack.Hilt.kapt)
 
+    implementation(Dependencies.Retrofit.retrofit)
+    implementation(Dependencies.Retrofit.gsonConverter)
+
     // region [ Test dependencies ]
     testImplementation(Dependencies.JUnit.junit)
     androidTestImplementation(Dependencies.Test.Ext.junit)
