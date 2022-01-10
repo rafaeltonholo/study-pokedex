@@ -50,7 +50,7 @@ fun PokemonListScreen(
 
 @Preview
 @Composable
-fun LightThemePreview() {
+private fun LightThemePreview() {
     PokedexAppTheme {
         val navController = rememberNavController()
         PokemonListScreen(navController)
@@ -62,7 +62,7 @@ fun LightThemePreview() {
     uiMode = UI_MODE_NIGHT_MASK,
 )
 @Composable
-fun DarkThemePreview() {
+private fun DarkThemePreview() {
     PokedexAppTheme(darkTheme = true) {
         val navController = rememberNavController()
         PokemonListScreen(navController)

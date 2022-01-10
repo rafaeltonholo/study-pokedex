@@ -66,7 +66,7 @@ fun SearchBar(
     showBackground = true,
 )
 @Composable
-fun LightThemePreview() {
+private fun LightThemePreview() {
     PokedexAppTheme {
         SearchBar(
             hint = "Testing Light theme...",
@@ -82,7 +82,7 @@ fun LightThemePreview() {
     uiMode = Configuration.UI_MODE_NIGHT_MASK,
 )
 @Composable
-fun DarkThemePreview() {
+private fun DarkThemePreview() {
     PokedexAppTheme(darkTheme = true) {
         SearchBar(
             hint = "Testing Dark theme...",

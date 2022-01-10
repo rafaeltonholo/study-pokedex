@@ -40,6 +40,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
         useIR = true
+        freeCompilerArgs += "-Xjvm-default=all"
     }
     buildFeatures {
         compose = true
@@ -67,12 +68,15 @@ dependencies {
     implementation(Dependencies.Jetpack.Compose.Activity.activityCompose)
 
     implementation(Dependencies.Jetpack.Hilt.hilt)
+    implementation(Dependencies.Jetpack.Hilt.navigationCompose)
     kapt(Dependencies.Jetpack.Hilt.kapt)
 
     implementation(Dependencies.Retrofit.retrofit)
     implementation(Dependencies.Retrofit.gsonConverter)
 
     implementation(Dependencies.Jetpack.Navigation.compose)
+
+    implementation(Dependencies.Coil.compose)
 
     // region [ Test dependencies ]
     testImplementation(Dependencies.JUnit.junit)

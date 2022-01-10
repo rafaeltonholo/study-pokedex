@@ -11,6 +11,11 @@ object Dependencies {
         const val hiltPlugin = "com.google.dagger:hilt-android-gradle-plugin:${Jetpack.Hilt.version}"
     }
 
+    object Coil {
+        private const val version = "1.4.0"
+        const val compose = "io.coil-kt:coil-compose:$version"
+    }
+
     object Kotlin {
         const val version = "1.5.31"
     }
@@ -42,6 +47,7 @@ object Dependencies {
             internal const val version = "2.40.5"
             const val hilt = "com.google.dagger:hilt-android:$version"
             const val kapt = "com.google.dagger:hilt-compiler:$version"
+            const val navigationCompose = "androidx.hilt:hilt-navigation-compose:1.0.0-rc01"
 
             object Test {
                 const val main = "com.google.dagger:hilt-android-testing:$version"
