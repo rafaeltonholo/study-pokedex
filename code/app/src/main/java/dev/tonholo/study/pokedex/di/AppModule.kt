@@ -15,8 +15,8 @@ object AppModule {
     @Provides
     fun provideRetrofit() =
         Retrofit.Builder()
-            .baseUrl("https://pokeapi.co/api/v2/")
             .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("https://pokeapi.co/api/v2/")
             .build()
 
     @Provides

@@ -15,15 +15,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
 import dev.tonholo.study.pokedex.R
+import dev.tonholo.study.pokedex.data.remote.PokeApi
+import dev.tonholo.study.pokedex.data.remote.responses.Pokemon
+import dev.tonholo.study.pokedex.data.remote.responses.PokemonList
+import dev.tonholo.study.pokedex.data.remote.responses.PokemonListResult
+import dev.tonholo.study.pokedex.screens.pokemonList.components.PokemonList
 import dev.tonholo.study.pokedex.screens.pokemonList.components.SearchBar
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
+import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
 
+@ExperimentalCoilApi
 @Composable
 fun PokemonListScreen(
     navController: NavController,
+    viewModel: PokemonListViewModel = hiltViewModel(),
 ) {
     Surface(
         color = MaterialTheme.colors.background,
@@ -44,10 +54,15 @@ fun PokemonListScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             )
+            PokemonList(
+                navController = navController,
+                viewModel = viewModel,
+            )
         }
     }
 }
 
+@ExperimentalCoilApi
 @Preview
 @Composable
 private fun LightThemePreview() {
@@ -57,6 +72,7 @@ private fun LightThemePreview() {
     }
 }
 
+@ExperimentalCoilApi
 @Preview(
     showBackground = true,
     uiMode = UI_MODE_NIGHT_MASK,
@@ -65,6 +81,33 @@ private fun LightThemePreview() {
 private fun DarkThemePreview() {
     PokedexAppTheme(darkTheme = true) {
         val navController = rememberNavController()
-        PokemonListScreen(navController)
+        PokemonListScreen(navController, buildFakeViewModel())
     }
+}
+
+private fun buildFakeViewModel(): PokemonListViewModel {
+    val entries = (0..2).map {
+        PokemonListResult(
+            name = "Pokemon $it",
+            url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$it.png",
+        )
+    }
+
+
+    return PokemonListViewModel(
+        GetPokemonListUseCase(object : PokeApi {
+            override suspend fun getPokemonList(limit: Int, offset: Int): PokemonList = with(entries) {
+                PokemonList(
+                    count = size,
+                    next = "mock",
+                    previous = "mock",
+                    results = this,
+                )
+            }
+
+            override suspend fun getPokemon(name: String): Pokemon {
+                TODO("Not yet implemented")
+            }
+        }),
+    )
 }

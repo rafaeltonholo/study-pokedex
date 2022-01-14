@@ -1,7 +1,7 @@
 package dev.tonholo.study.pokedex.data.remote.responses
 
 
-data class Result(
+data class PokemonListResult(
     val name: String,
     val url: String,
 )
