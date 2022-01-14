@@ -6,11 +6,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -26,10 +26,46 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import dev.tonholo.study.pokedex.data.model.PokemonEntry
+import dev.tonholo.study.pokedex.data.remote.PokeApi
+import dev.tonholo.study.pokedex.data.remote.responses.Pokemon
+import dev.tonholo.study.pokedex.data.remote.responses.PokemonList
 import dev.tonholo.study.pokedex.screens.Routes
 import dev.tonholo.study.pokedex.screens.pokemonList.PokemonListViewModel
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
 import dev.tonholo.study.pokedex.ui.theme.RobotoCondensed
+import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
+
+@ExperimentalCoilApi
+@Composable
+fun PokedexRow(
+    rowIndex: Int,
+    entries: List<PokemonEntry>,
+    navController: NavController,
+    viewModel: PokemonListViewModel = hiltViewModel(),
+) {
+    Column {
+        Row {
+            PokedexEntry(
+                entry = entries[rowIndex * 2],
+                navController = navController,
+                modifier = Modifier.weight(1f),
+                viewModel,
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            if (entries.size >= rowIndex * 2 + 2) {
+                PokedexEntry(
+                    entry = entries[rowIndex * 2 + 1],
+                    navController = navController,
+                    modifier = Modifier.weight(1f),
+                    viewModel,
+                )
+            } else {
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
 
 @ExperimentalCoilApi
 @Composable
@@ -70,22 +106,40 @@ private fun PokedexEntry(
                     crossfade(true)
                 }
             )
-            val painterState = painter.state
-            if (painterState is ImagePainter.State.Success) {
-                LaunchedEffect(Unit) {
-                    dominantColor = viewModel.getDominantColor(painterState.result.drawable)
-                }
-            }
 
-            Image(
-                painter = painter,
-                contentDescription = entry.pokemonName,
+            Box(
                 modifier = Modifier
                     .size(120.dp)
-                    .align(CenterHorizontally),
-            )
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                when (val painterState = painter.state) {
+                    is ImagePainter.State.Loading -> {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colors.primary,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                        )
+                    }
+                    is ImagePainter.State.Success -> {
+                        LaunchedEffect(Unit) {
+                            dominantColor = viewModel.getDominantColor(painterState.result.drawable)
+                        }
+                    }
+                    else -> {
+                        // no-op
+                    }
+                }
+                Image(
+                    painter = painter,
+                    contentDescription = entry.pokemonName,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .align(Alignment.Center),
+                )
+            }
+
             Text(
-                text = entry.pokemonName,
+                text = "#${entry.number} - ${entry.pokemonName}",
                 fontFamily = RobotoCondensed,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
@@ -95,36 +149,15 @@ private fun PokedexEntry(
     }
 }
 
-@ExperimentalCoilApi
-@Composable
-fun PokedexRow(
-    rowIndex: Int,
-    entries: List<PokemonEntry>,
-    navController: NavController,
-    viewModel: PokemonListViewModel = hiltViewModel(),
-) {
-    Column {
-        Row {
-            PokedexEntry(
-                entry = entries[rowIndex * 2],
-                navController = navController,
-                modifier = Modifier.weight(1f),
-                viewModel,
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            if (entries.size >= rowIndex * 2 + 2) {
-                PokedexEntry(
-                    entry = entries[rowIndex * 2 + 1],
-                    navController = navController,
-                    modifier = Modifier.weight(1f),
-                    viewModel,
-                )
-            } else {
-                Spacer(modifier = Modifier.weight(1f))
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+private object StubPokemonApi : PokeApi {
+    override suspend fun getPokemonList(limit: Int, offset: Int): PokemonList {
+        throw NotImplementedError()
     }
+
+    override suspend fun getPokemon(name: String): Pokemon {
+        throw NotImplementedError()
+    }
+
 }
 
 @ExperimentalCoilApi
@@ -139,6 +172,7 @@ private fun LightThemePreview() {
             PokemonEntry(
                 "Pokemon $it",
                 imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$it.png",
+                number = it,
             )
         }
         val itemCount = if (entries.size % 2 == 0) {
@@ -152,7 +186,9 @@ private fun LightThemePreview() {
                     rowIndex = index,
                     entries = entries,
                     navController = navController,
-                    viewModel = PokemonListViewModel(),
+                    viewModel = PokemonListViewModel(
+                        GetPokemonListUseCase(StubPokemonApi),
+                    ),
                 )
             }
         }
@@ -172,6 +208,7 @@ private fun DarkThemePreview() {
             PokemonEntry(
                 "Pokemon $it",
                 imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$it.png",
+                number = it,
             )
         }
         val itemCount = if (entries.size % 2 == 0) {
@@ -189,7 +226,9 @@ private fun DarkThemePreview() {
                     rowIndex = index,
                     entries = entries,
                     navController = navController,
-                    viewModel = PokemonListViewModel(),
+                    viewModel = PokemonListViewModel(
+                        GetPokemonListUseCase(StubPokemonApi),
+                    ),
                 )
             }
         }
