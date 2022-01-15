@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tonholo.study.pokedex.data.model.PokemonEntry
 import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -26,6 +27,9 @@ class PokemonListViewModel @Inject constructor(
     val loadingError = mutableStateOf("")
     val isLoading = mutableStateOf(false)
     val isEndReached = mutableStateOf(false)
+    val isSearching = mutableStateOf(false)
+
+    private var cachedPokemonList = listOf<PokemonEntry>()
 
     init {
         loadPokemonListPaginated()
@@ -71,6 +75,35 @@ class PokemonListViewModel @Inject constructor(
                     isLoading.value = false
                 }
             }
+        }
+    }
+
+    fun filterPokemonList(query: String) {
+        val listToSearch = if (isSearching.value) {
+            cachedPokemonList
+        } else {
+            pokemonList.value
+        }
+
+        viewModelScope.launch(Dispatchers.Default) {
+            if (query.isBlank()) {
+                pokemonList.value = cachedPokemonList
+                isSearching.value = false
+                return@launch
+            }
+
+            val results = listToSearch.filter {
+                with(query.trim()) {
+                    it.pokemonName.contains(this) || it.number.toString() == this
+                }
+            }
+
+            if (!isSearching.value) {
+                cachedPokemonList = pokemonList.value
+                isSearching.value = true
+            }
+
+            pokemonList.value = results
         }
     }
 

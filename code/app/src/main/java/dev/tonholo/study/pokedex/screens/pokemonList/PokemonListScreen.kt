@@ -52,7 +52,10 @@ fun PokemonListScreen(
                 hint = stringResource(id = R.string.pokemon_list_search_bar_hint),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                onSearch = {
+                    viewModel.filterPokemonList(it)
+                }
             )
             PokemonList(
                 navController = navController,
@@ -68,7 +71,7 @@ fun PokemonListScreen(
 private fun LightThemePreview() {
     PokedexAppTheme {
         val navController = rememberNavController()
-        PokemonListScreen(navController)
+        PokemonListScreen(navController, buildFakeViewModel())
     }
 }
 
@@ -86,7 +89,7 @@ private fun DarkThemePreview() {
 }
 
 private fun buildFakeViewModel(): PokemonListViewModel {
-    val entries = (0..2).map {
+    val entries = (0..100).map {
         PokemonListResult(
             name = "Pokemon $it",
             url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$it.png",
