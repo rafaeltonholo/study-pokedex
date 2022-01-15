@@ -15,7 +15,7 @@ class GetPokemonListUseCase @Inject constructor(
     data class Params(
         val limit: Int = 0,
         val offset: Int = 0,
-    ): UseCase.Params
+    )
 
     sealed class Result {
         data class Success(val data: PokemonList): Result()
