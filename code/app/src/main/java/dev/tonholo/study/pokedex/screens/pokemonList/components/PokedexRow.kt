@@ -121,9 +121,7 @@ private fun PokedexEntry(
                         )
                     }
                     is ImagePainter.State.Success -> {
-                        LaunchedEffect(Unit) {
-                            dominantColor = viewModel.getDominantColor(painterState.result.drawable)
-                        }
+                        dominantColor = viewModel.getDominantColor(painterState.result.drawable)
                     }
                     else -> {
                         // no-op

@@ -93,8 +93,9 @@ class PokemonListViewModel @Inject constructor(
             }
 
             val results = listToSearch.filter {
-                with(query.trim()) {
-                    it.pokemonName.contains(this) || it.number.toString() == this
+                with(query.lowercase(Locale.getDefault()).trim()) {
+                    it.pokemonName.lowercase(Locale.getDefault()).contains(this)
+                            || it.number.toString() == this
                 }
             }
 

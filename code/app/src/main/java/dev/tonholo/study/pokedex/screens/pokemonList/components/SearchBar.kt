@@ -48,7 +48,7 @@ fun SearchBar(
                 .background(MaterialTheme.colors.surface)
                 .padding(horizontal = horizontalPadding, vertical = verticalPadding)
                 .onFocusChanged {
-                    isHintDisplayed = !it.isFocused
+                    isHintDisplayed = !it.isFocused && text.isBlank()
                 }
         )
         if (isHintDisplayed) {
