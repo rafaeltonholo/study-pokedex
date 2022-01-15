@@ -4,4 +4,6 @@
         The Pokemon brand logo
     </string>
     <string name="pokemon_list_search_bar_hint">Search by Pokemon name or id…</string>
+    <string name="pokemon_detail_navigate_back">Navigate back</string>
+    <string name="pokemon_detail_sprint_content_description">Main sprint from %s</string>
 </resources>
