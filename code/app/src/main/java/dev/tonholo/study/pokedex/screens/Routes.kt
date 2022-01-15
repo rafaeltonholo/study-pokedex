@@ -16,6 +16,6 @@ object Routes {
             "$baseRoute/{${Params.pokemonName}}?${Params.dominantColor}={${Params.dominantColor}}"
 
         fun build(pokemonName: String, dominantColor: Int) =
-            "$baseRoute/{${pokemonName}}?${Params.dominantColor}=${dominantColor}"
+            "$baseRoute/${pokemonName.lowercase()}?${Params.dominantColor}=${dominantColor}"
     }
 }
