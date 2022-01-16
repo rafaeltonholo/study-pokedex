@@ -6,9 +6,9 @@ This is an app to study about Jetpack Compose. This app will contains the follow
 - [x] Pokemon list, containing:
     - [x] Search bar to search by pokemon name or pokemon id
     - [x] A list of Pokemon that which Pokemon item has an image, its number and its name
-- [ ] Pokemon details, containing:
-    - [ ] The Pokemon descriptions (name, number, weight, height, stats, etc)
-    - [ ] The Pokemon image
+- [x] Pokemon details, containing:
+    - [x] The Pokemon descriptions (name, number, weight, height, stats, etc)
+    - [x] The Pokemon image
 
 ## Desired features
 - [ ] List of Pokemon already captured
