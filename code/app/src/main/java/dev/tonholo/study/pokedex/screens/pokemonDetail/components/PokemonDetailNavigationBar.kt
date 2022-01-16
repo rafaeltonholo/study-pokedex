@@ -20,10 +20,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import dev.tonholo.study.pokedex.R
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
+import dev.tonholo.study.pokedex.ui.theme.Purple200
 
 @Composable
 fun PokemonDetailNavigationBar(
     navController: NavController,
+    dominantColor: Color,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -31,20 +33,21 @@ fun PokemonDetailNavigationBar(
         modifier = modifier
             .background(
                 Brush.verticalGradient(
-                    listOf(
-                        Color.Black,
-                        Color.Transparent
-                    )
+                    0.0f to Color.Black,
+                    0.4f to dominantColor,
                 )
             )
     ) {
-        IconButton(onClick = { navController.popBackStack() }) {
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .offset(x = 16.dp, y = 16.dp),
+        ) {
             Image(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = stringResource(id = R.string.pokemon_detail_navigate_back),
                 modifier = Modifier
-                    .size(36.dp)
-                    .offset(x = 16.dp, y = 16.dp),
+                    .size(36.dp),
                 colorFilter = ColorFilter.tint(Color.White)
             )
         }
@@ -60,6 +63,7 @@ private fun LightThemePreview() {
         val navController = rememberNavController()
         PokemonDetailNavigationBar(
             navController = navController,
+            dominantColor = Purple200,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(80.dp),
@@ -77,6 +81,7 @@ private fun DarkThemePreview() {
         val navController = rememberNavController()
         PokemonDetailNavigationBar(
             navController = navController,
+            dominantColor = Purple200,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(80.dp),
