@@ -2,6 +2,7 @@ package dev.tonholo.study.pokedex.screens.pokemonDetail.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -19,9 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import dev.tonholo.study.pokedex.R
-import dev.tonholo.study.pokedex.data.remote.responses.Pokemon
-import dev.tonholo.study.pokedex.data.remote.responses.Species
-import dev.tonholo.study.pokedex.data.remote.responses.Sprites
+import dev.tonholo.study.pokedex.data.remote.responses.*
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
 import java.util.*
 
@@ -32,15 +31,11 @@ fun PokemonDetailSection(
     topPadding: Dp = 20.dp,
     pokemonImageSize: Dp = 200.dp,
 ) = with(pokemon) {
-
-    val scrollState = rememberScrollState()
-
     Column(
         modifier = modifier
             .offset(y = -topPadding)
             .fillMaxSize()
-            .offset(y = pokemonImageSize / 2)
-            .verticalScroll(scrollState)
+            .offset(y = (pokemonImageSize / 2) - topPadding)
     ) {
         val pokemonName = name.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
@@ -53,8 +48,23 @@ fun PokemonDetailSection(
             color = MaterialTheme.colors.onSurface,
             modifier = Modifier.fillMaxWidth(),
         )
-    }
 
+        val scrollState = rememberScrollState()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+        ) {
+            PokemonTypeSection(types = types)
+            PokemonDetailDataSection(
+                pokemonWeight = weight,
+                pokemonHeight = height,
+            )
+            PokemonDetailBaseStatsSection(
+                stats = stats,
+            )
+        }
+    }
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize(),
@@ -67,7 +77,7 @@ fun PokemonDetailSection(
                 }
             ),
             contentDescription = stringResource(
-                id = R.string.pokemon_detail_sprint_content_description,
+                id = R.string.pokemon_detail_sprite_content_description,
                 name,
             ),
             modifier = Modifier
@@ -96,9 +106,11 @@ private fun LightThemePreview() {
 @Composable
 private fun DarkThemePreview() {
     PokedexAppTheme(darkTheme = true) {
-        PokemonDetailSection(
-            pokemon = previewPokemon,
-        )
+        Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            PokemonDetailSection(
+                pokemon = previewPokemon,
+            )
+        }
     }
 }
 
@@ -128,6 +140,21 @@ private val previewPokemon = Pokemon(
         frontShinyFemale = "mock",
     ),
     stats = listOf(),
-    types = listOf(),
+    types = listOf(
+        Type(
+            slot = 0,
+            type = TypeX(
+                name = "electric",
+                url = "https://pokeapi.co/api/v2/type/13/"
+            ),
+        ),
+        Type(
+            slot = 0,
+            type = TypeX(
+                name = "steel",
+                url = "https://pokeapi.co/api/v2/type/9/"
+            ),
+        ),
+    ),
     weight = 100,
 )
