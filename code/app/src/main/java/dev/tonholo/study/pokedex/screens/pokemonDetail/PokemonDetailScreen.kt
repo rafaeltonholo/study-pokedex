@@ -19,10 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import dev.tonholo.study.pokedex.data.remote.PokeApi
-import dev.tonholo.study.pokedex.data.remote.responses.Pokemon
-import dev.tonholo.study.pokedex.data.remote.responses.PokemonList
-import dev.tonholo.study.pokedex.data.remote.responses.Species
-import dev.tonholo.study.pokedex.data.remote.responses.Sprites
+import dev.tonholo.study.pokedex.data.remote.responses.*
 import dev.tonholo.study.pokedex.screens.pokemonDetail.components.PokemonDetailNavigationBar
 import dev.tonholo.study.pokedex.screens.pokemonDetail.components.PokemonDetailStateWrapper
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
@@ -37,9 +34,10 @@ fun PokemonDetailScreen(
     topPadding: Dp = 20.dp,
     pokemonImageSize: Dp = 200.dp,
     viewModel: PokemonDetailViewModel = hiltViewModel(),
+    initialState: GetPokemonDetailUseCase.Result = GetPokemonDetailUseCase.Result.IsLoading,
 ) {
     val pokemonDetailState = produceState<GetPokemonDetailUseCase.Result>(
-        initialValue = GetPokemonDetailUseCase.Result.IsLoading
+        initialValue = initialState
     ) {
         value = viewModel.getPokemonDetail(pokemonName)
     }
@@ -47,14 +45,13 @@ fun PokemonDetailScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(dominantColor)
-            .padding(bottom = 16.dp)
     ) {
         PokemonDetailNavigationBar(
             navController = navController,
+            dominantColor = dominantColor,
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.2f)
+                .fillMaxHeight(1.2f)
                 .align(Alignment.TopStart)
         )
 
@@ -97,6 +94,9 @@ private fun LightThemePreview() {
             pokemonName = "",
             navController = navController,
             viewModel = buildPreviewViewModel(),
+            initialState = GetPokemonDetailUseCase.Result.Success(
+                data = previewPokemon,
+            )
         )
     }
 }
@@ -114,6 +114,9 @@ private fun DarkThemePreview() {
             pokemonName = "",
             navController = navController,
             viewModel = buildPreviewViewModel(),
+            initialState = GetPokemonDetailUseCase.Result.Success(
+                data = previewPokemon,
+            )
         )
     }
 }
@@ -124,34 +127,108 @@ private fun buildPreviewViewModel() = PokemonDetailViewModel(
             throw NotImplementedError()
         }
 
-        override suspend fun getPokemon(name: String): Pokemon = Pokemon(
-            abilities = listOf(),
-            baseExperience = 100,
-            forms = listOf(),
-            gameIndices = listOf(),
-            height = 100,
-            heldItems = listOf(),
-            id = 123,
-            isDefault = true,
-            locationAreaEncounters = "mock",
-            moves = listOf(),
-            name = "Pokemon Mock",
-            order = 1,
-            pastTypes = listOf(),
-            species = Species("", ""),
-            sprites = Sprites(
-                backDefault = "mock",
-                backFemale = "mock",
-                backShiny = "mock",
-                backShinyFemale = "mock",
-                frontDefault = "mock",
-                frontFemale = "mock",
-                frontShiny = "mock",
-                frontShinyFemale = "mock",
-            ),
-            stats = listOf(),
-            types = listOf(),
-            weight = 100,
-        )
+        override suspend fun getPokemon(name: String): Pokemon = previewPokemon
     })
+)
+
+private val previewPokemon = Pokemon(
+    abilities = listOf(),
+    baseExperience = 100,
+    forms = listOf(),
+    gameIndices = listOf(),
+    height = 100,
+    heldItems = listOf(),
+    id = 123,
+    isDefault = true,
+    locationAreaEncounters = "mock",
+    moves = listOf(),
+    name = "Pokemon Mock",
+    order = 1,
+    pastTypes = listOf(),
+    species = Species("", ""),
+    sprites = Sprites(
+        backDefault = "mock",
+        backFemale = "mock",
+        backShiny = "mock",
+        backShinyFemale = "mock",
+        frontDefault = "mock",
+        frontFemale = "mock",
+        frontShiny = "mock",
+        frontShinyFemale = "mock",
+    ),
+    stats = listOf(
+        PokemonStat(
+            baseStat = 100,
+            effort = 1,
+            stat = StatX(
+                name = "hp",
+                url = "",
+            )
+        ),
+        PokemonStat(
+            baseStat = 50,
+            effort = 1,
+            stat = StatX(
+                name = "attack",
+                url = "",
+            )
+        ),
+        PokemonStat(
+            baseStat = 75,
+            effort = 1,
+            stat = StatX(
+                name = "defense",
+                url = "",
+            )
+        ),
+        PokemonStat(
+            baseStat = 150,
+            effort = 1,
+            stat = StatX(
+                name = "special-attack",
+                url = "",
+            )
+        ),
+        PokemonStat(
+            baseStat = 80,
+            effort = 1,
+            stat = StatX(
+                name = "special-defense",
+                url = "",
+            )
+        ),
+        PokemonStat(
+            baseStat = 30,
+            effort = 1,
+            stat = StatX(
+                name = "speed",
+                url = "",
+            )
+        ),
+        PokemonStat(
+            baseStat = 0,
+            effort = 1,
+            stat = StatX(
+                name = "other",
+                url = "",
+            )
+        ),
+    ),
+    types = listOf(
+        Type(
+            slot = 0,
+            type = TypeX(
+                name = "electric",
+                url = "https://pokeapi.co/api/v2/type/13/"
+            ),
+        ),
+        Type(
+            slot = 0,
+            type = TypeX(
+                name = "steel",
+                url = "https://pokeapi.co/api/v2/type/9/"
+            ),
+        ),
+    ),
+    weight = 100,
 )
