@@ -22,7 +22,7 @@ import dev.tonholo.study.pokedex.data.remote.PokeApi
 import dev.tonholo.study.pokedex.data.remote.responses.*
 import dev.tonholo.study.pokedex.screens.pokemonDetail.components.PokemonDetailNavigationBar
 import dev.tonholo.study.pokedex.screens.pokemonDetail.components.PokemonDetailStateWrapper
-import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
+import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.ui.theme.Purple200
 import dev.tonholo.study.pokedex.usecases.GetPokemonDetailUseCase
 
@@ -87,7 +87,7 @@ fun PokemonDetailScreen(
 )
 @Composable
 private fun LightThemePreview() {
-    PokedexAppTheme(darkTheme = false) {
+    PokedexAppThemePreview(darkTheme = false) {
         val navController = rememberNavController()
         PokemonDetailScreen(
             dominantColor = Purple200,
@@ -107,7 +107,7 @@ private fun LightThemePreview() {
 )
 @Composable
 private fun DarkThemePreview() {
-    PokedexAppTheme(darkTheme = true) {
+    PokedexAppThemePreview(darkTheme = true) {
         val navController = rememberNavController()
         PokemonDetailScreen(
             dominantColor = Purple200,

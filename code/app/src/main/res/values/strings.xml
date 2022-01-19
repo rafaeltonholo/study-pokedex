@@ -9,4 +9,5 @@
     <string name="pokemon_detail_height">Pokemon height in meters</string>
     <string name="pokemon_detail_weight">Pokemon weight in kilogram</string>
     <string name="pokemon_base_stats">Base stats:</string>
+    <string name="theme_switcher_content_description">Change theme button</string>
 </resources>

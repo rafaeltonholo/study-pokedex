@@ -12,7 +12,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import dev.tonholo.study.pokedex.data.remote.responses.Type
 import dev.tonholo.study.pokedex.data.remote.responses.TypeX
 import dev.tonholo.study.pokedex.data.remote.responses.toColor
-import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
+import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import java.util.*
 
 @Composable
@@ -58,7 +57,7 @@ fun PokemonTypeSection(
 )
 @Composable
 private fun LightThemePreview() {
-    PokedexAppTheme(darkTheme = false) {
+    PokedexAppThemePreview(darkTheme = false) {
         PokemonTypeSection(
             types = previewTypes,
         )
@@ -71,7 +70,7 @@ private fun LightThemePreview() {
 )
 @Composable
 private fun DarkThemePreview() {
-    PokedexAppTheme(darkTheme = true) {
+    PokedexAppThemePreview(darkTheme = true) {
         Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
             PokemonTypeSection(
                 types = previewTypes,

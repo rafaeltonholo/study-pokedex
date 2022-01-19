@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import dev.tonholo.study.pokedex.R
 import dev.tonholo.study.pokedex.data.remote.responses.*
-import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
+import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import java.util.*
 
 @Composable
@@ -92,7 +92,7 @@ fun PokemonDetailSection(
 )
 @Composable
 private fun LightThemePreview() {
-    PokedexAppTheme(darkTheme = false) {
+    PokedexAppThemePreview(darkTheme = false) {
         PokemonDetailSection(
             pokemon = previewPokemon,
         )
@@ -105,7 +105,7 @@ private fun LightThemePreview() {
 )
 @Composable
 private fun DarkThemePreview() {
-    PokedexAppTheme(darkTheme = true) {
+    PokedexAppThemePreview(darkTheme = true) {
         Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
             PokemonDetailSection(
                 pokemon = previewPokemon,

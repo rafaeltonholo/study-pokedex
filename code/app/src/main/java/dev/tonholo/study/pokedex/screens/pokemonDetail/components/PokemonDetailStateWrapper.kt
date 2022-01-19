@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import dev.tonholo.study.pokedex.data.remote.responses.Pokemon
 import dev.tonholo.study.pokedex.data.remote.responses.Species
 import dev.tonholo.study.pokedex.data.remote.responses.Sprites
-import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
+import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.usecases.GetPokemonDetailUseCase
 
 @Composable
@@ -57,7 +57,7 @@ fun PokemonDetailStateWrapper(
 )
 @Composable
 private fun LightThemePreview() {
-    PokedexAppTheme(darkTheme = false) {
+    PokedexAppThemePreview(darkTheme = false) {
         val state = derivedStateOf {
             GetPokemonDetailUseCase.Result.Success(
                 data = previewPokemon,
@@ -75,7 +75,7 @@ private fun LightThemePreview() {
 )
 @Composable
 private fun DarkThemePreview() {
-    PokedexAppTheme(darkTheme = true) {
+    PokedexAppThemePreview(darkTheme = true) {
         val state = derivedStateOf {
             GetPokemonDetailUseCase.Result.Success(
                 data = previewPokemon,

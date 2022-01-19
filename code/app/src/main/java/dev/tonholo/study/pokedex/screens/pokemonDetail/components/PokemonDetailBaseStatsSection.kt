@@ -22,7 +22,7 @@ import dev.tonholo.study.pokedex.data.remote.responses.PokemonStat
 import dev.tonholo.study.pokedex.data.remote.responses.StatX
 import dev.tonholo.study.pokedex.data.remote.responses.toAbbreviation
 import dev.tonholo.study.pokedex.data.remote.responses.toColor
-import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
+import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 
 @Composable
 fun PokemonDetailBaseStatsSection(
@@ -121,7 +121,7 @@ private fun PokemonStat(
 )
 @Composable
 private fun LightThemePreview() {
-    PokedexAppTheme(darkTheme = false) {
+    PokedexAppThemePreview(darkTheme = false) {
         PokemonDetailBaseStatsSection(
             stats = previewStats,
             modifier = Modifier.padding(8.dp),
@@ -135,7 +135,7 @@ private fun LightThemePreview() {
 )
 @Composable
 private fun DarkThemePreview() {
-    PokedexAppTheme(darkTheme = true) {
+    PokedexAppThemePreview(darkTheme = true) {
         Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
             PokemonDetailBaseStatsSection(
                 stats = previewStats,

@@ -31,7 +31,7 @@ import dev.tonholo.study.pokedex.data.remote.responses.Pokemon
 import dev.tonholo.study.pokedex.data.remote.responses.PokemonList
 import dev.tonholo.study.pokedex.screens.Routes
 import dev.tonholo.study.pokedex.screens.pokemonList.PokemonListViewModel
-import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
+import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.ui.theme.RobotoCondensed
 import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
 
@@ -141,7 +141,8 @@ private fun PokedexEntry(
                 fontFamily = RobotoCondensed,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                color = MaterialTheme.colors.onSurface,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }
@@ -164,7 +165,7 @@ private object StubPokemonApi : PokeApi {
 )
 @Composable
 private fun LightThemePreview() {
-    PokedexAppTheme {
+    PokedexAppThemePreview {
         val navController = rememberNavController()
         val entries = (0..2).map {
             PokemonEntry(
@@ -200,7 +201,7 @@ private fun LightThemePreview() {
 )
 @Composable
 private fun DarkThemePreview() {
-    PokedexAppTheme(darkTheme = true) {
+    PokedexAppThemePreview(darkTheme = true) {
         val navController = rememberNavController()
         val entries = (0 until 4).map {
             PokemonEntry(

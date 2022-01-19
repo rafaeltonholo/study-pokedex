@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.tonholo.study.pokedex.R
-import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
+import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 
 @Composable
 fun PokemonDetailDataSection(
@@ -91,7 +91,7 @@ private fun PokemonDetailDataItem(
 )
 @Composable
 private fun LightThemePreview() {
-    PokedexAppTheme(darkTheme = false) {
+    PokedexAppThemePreview(darkTheme = false) {
         PokemonDetailDataSection(
             pokemonWeight = 100,
             pokemonHeight = 1000,
@@ -105,7 +105,7 @@ private fun LightThemePreview() {
 )
 @Composable
 private fun DarkThemePreview() {
-    PokedexAppTheme(darkTheme = true) {
+    PokedexAppThemePreview(darkTheme = true) {
         Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
             PokemonDetailDataSection(
                 pokemonWeight = 100,

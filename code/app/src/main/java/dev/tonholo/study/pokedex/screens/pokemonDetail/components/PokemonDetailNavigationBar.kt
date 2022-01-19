@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import dev.tonholo.study.pokedex.R
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
+import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.ui.theme.Purple200
 
 @Composable
@@ -59,7 +60,7 @@ fun PokemonDetailNavigationBar(
 )
 @Composable
 private fun LightThemePreview() {
-    PokedexAppTheme(darkTheme = false) {
+    PokedexAppThemePreview(darkTheme = false) {
         val navController = rememberNavController()
         PokemonDetailNavigationBar(
             navController = navController,
@@ -77,7 +78,7 @@ private fun LightThemePreview() {
 )
 @Composable
 private fun DarkThemePreview() {
-    PokedexAppTheme(darkTheme = true) {
+    PokedexAppThemePreview(darkTheme = true) {
         val navController = rememberNavController()
         PokemonDetailNavigationBar(
             navController = navController,

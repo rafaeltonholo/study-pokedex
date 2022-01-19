@@ -16,7 +16,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
+import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 
 @Composable
 fun SearchBar(
@@ -67,7 +67,7 @@ fun SearchBar(
 )
 @Composable
 private fun LightThemePreview() {
-    PokedexAppTheme {
+    PokedexAppThemePreview {
         SearchBar(
             hint = "Testing Light theme...",
             modifier = Modifier
@@ -83,7 +83,7 @@ private fun LightThemePreview() {
 )
 @Composable
 private fun DarkThemePreview() {
-    PokedexAppTheme(darkTheme = true) {
+    PokedexAppThemePreview(darkTheme = true) {
         SearchBar(
             hint = "Testing Dark theme...",
             modifier = Modifier

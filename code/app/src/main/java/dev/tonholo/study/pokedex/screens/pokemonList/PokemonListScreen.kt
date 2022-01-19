@@ -2,13 +2,14 @@ package dev.tonholo.study.pokedex.screens.pokemonList
 
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -26,19 +27,40 @@ import dev.tonholo.study.pokedex.data.remote.responses.PokemonList
 import dev.tonholo.study.pokedex.data.remote.responses.PokemonListResult
 import dev.tonholo.study.pokedex.screens.pokemonList.components.PokemonList
 import dev.tonholo.study.pokedex.screens.pokemonList.components.SearchBar
-import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
+import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
+import dev.tonholo.study.pokedex.ui.theme.state.ThemeState
+import dev.tonholo.study.pokedex.ui.theme.state.ThemeStateHandler
+import dev.tonholo.study.pokedex.ui.theme.viewModel.ThemeViewModel
 import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @ExperimentalCoilApi
 @Composable
 fun PokemonListScreen(
     navController: NavController,
     viewModel: PokemonListViewModel = hiltViewModel(),
+    themeViewModel: ThemeViewModel = hiltViewModel(),
 ) {
-    Surface(
-        color = MaterialTheme.colors.background,
-        modifier = Modifier.fillMaxSize(),
+    val theme by themeViewModel.theme.collectAsState()
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background),
     ) {
+        IconButton(onClick = {
+            themeViewModel.onSwitchThemeRequest()
+        }) {
+            Image(
+                painter = painterResource(id = when (theme) {
+                    is ThemeState.Auto -> R.drawable.ic_baseline_brightness_auto_24
+                    is ThemeState.Dark -> R.drawable.ic_baseline_brightness_2_24
+                    is ThemeState.Light -> R.drawable.ic_baseline_brightness_high_24
+                }),
+                contentDescription = stringResource(id = R.string.theme_switcher_content_description),
+            )
+        }
         Column {
             Image(
                 painter = painterResource(id = R.drawable.ic_international_pok_mon_logo),
@@ -69,9 +91,13 @@ fun PokemonListScreen(
 @Preview
 @Composable
 private fun LightThemePreview() {
-    PokedexAppTheme {
+    PokedexAppThemePreview {
         val navController = rememberNavController()
-        PokemonListScreen(navController, buildFakeViewModel())
+        PokemonListScreen(
+            navController,
+            buildFakeViewModel(),
+            buildPreviewThemeViewModel(ThemeState.Light),
+        )
     }
 }
 
@@ -82,11 +108,27 @@ private fun LightThemePreview() {
 )
 @Composable
 private fun DarkThemePreview() {
-    PokedexAppTheme(darkTheme = true) {
+    PokedexAppThemePreview(darkTheme = true) {
         val navController = rememberNavController()
-        PokemonListScreen(navController, buildFakeViewModel())
+        PokemonListScreen(
+            navController,
+            buildFakeViewModel(),
+            buildPreviewThemeViewModel(ThemeState.Dark),
+        )
     }
 }
+
+private fun buildPreviewThemeViewModel(themeState: ThemeState) =
+    ThemeViewModel(
+        object : ThemeStateHandler {
+            override val theme: StateFlow<ThemeState>
+                get() = MutableStateFlow(themeState)
+
+            override fun switchThemeRequest(currentTheme: ThemeState) {
+                // no-op
+            }
+        }
+    )
 
 private fun buildFakeViewModel(): PokemonListViewModel {
     val entries = (0..100).map {

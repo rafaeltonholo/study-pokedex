@@ -1,5 +1,7 @@
 package dev.tonholo.study.pokedex.di
 
+import android.app.Application
+import android.content.res.Resources
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,13 +15,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 object AppModule {
 
     @Provides
-    fun provideRetrofit() =
+    fun provideRetrofit(): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl("https://pokeapi.co/api/v2/")
             .build()
 
     @Provides
-    fun providePokeApi(retrofit: Retrofit) =
+    fun providePokeApi(retrofit: Retrofit): PokeApi =
         retrofit.create(PokeApi::class.java)
+
+    @Provides
+    fun provideResources(application: Application): Resources = application.resources
 }
