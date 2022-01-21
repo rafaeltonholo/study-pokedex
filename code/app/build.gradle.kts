@@ -78,6 +78,8 @@ dependencies {
 
     implementation(Dependencies.Coil.compose)
 
+    implementation(Dependencies.Jetpack.DataStore.preferences)
+
     // region [ Test dependencies ]
     testImplementation(Dependencies.JUnit.junit)
     androidTestImplementation(Dependencies.Test.Ext.junit)

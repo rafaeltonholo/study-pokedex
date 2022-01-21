@@ -43,6 +43,10 @@ object Dependencies {
             }
         }
 
+        object DataStore {
+            const val preferences = "androidx.datastore:datastore-preferences:1.0.0"
+        }
+
         object Hilt {
             internal const val version = "2.40.5"
             const val hilt = "com.google.dagger:hilt-android:$version"
