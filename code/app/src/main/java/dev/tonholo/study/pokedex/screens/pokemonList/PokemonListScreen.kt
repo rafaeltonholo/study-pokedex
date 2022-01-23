@@ -124,7 +124,11 @@ private fun buildPreviewThemeViewModel(themeState: ThemeState) =
             override val theme: StateFlow<ThemeState>
                 get() = MutableStateFlow(themeState)
 
-            override fun switchThemeRequest(currentTheme: ThemeState) {
+            override suspend fun retrieveFromDataStore() {
+                // no-op
+            }
+
+            override suspend fun switchThemeRequest(currentTheme: ThemeState) {
                 // no-op
             }
         }

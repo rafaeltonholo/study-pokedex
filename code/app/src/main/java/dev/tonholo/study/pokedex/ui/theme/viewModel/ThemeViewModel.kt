@@ -1,22 +1,39 @@
 package dev.tonholo.study.pokedex.ui.theme.viewModel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.scopes.ViewModelScoped
 import dev.tonholo.study.pokedex.ui.theme.state.ThemeState
 import dev.tonholo.study.pokedex.ui.theme.state.ThemeStateHandler
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class ThemeViewModel @Inject constructor(
     private val handler: ThemeStateHandler,
+    private val job: CoroutineContext = Dispatchers.IO + Job(),
 ) : ViewModel() {
     val theme: StateFlow<ThemeState> = handler.theme
 
-    fun onSwitchThemeRequest() {
-        handler.switchThemeRequest(theme.value)
+    init {
+        viewModelScope.launch(job) {
+            handler.retrieveFromDataStore()
+        }
     }
 
+    fun onSwitchThemeRequest() {
+        viewModelScope.launch(job) {
+            handler.switchThemeRequest(theme.value)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        job.cancel()
+    }
 }
