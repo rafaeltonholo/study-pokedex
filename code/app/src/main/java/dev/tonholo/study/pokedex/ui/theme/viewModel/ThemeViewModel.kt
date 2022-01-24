@@ -16,9 +16,9 @@ import kotlin.coroutines.CoroutineContext
 @HiltViewModel
 class ThemeViewModel @Inject constructor(
     private val handler: ThemeStateHandler,
-    private val job: CoroutineContext = Dispatchers.IO + Job(),
 ) : ViewModel() {
     val theme: StateFlow<ThemeState> = handler.theme
+    private val job: CoroutineContext = Dispatchers.IO + Job()
 
     init {
         viewModelScope.launch(job) {
