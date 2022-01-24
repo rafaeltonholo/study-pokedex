@@ -68,6 +68,13 @@ object Dependencies {
             const val classpath = "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5"
             const val compose = "androidx.navigation:navigation-compose:2.4.0-rc01"
         }
+
+        object Room {
+            private const val version = "2.4.0"
+            const val runtime = "androidx.room:room-runtime:$version"
+            const val ksp = "androidx.room:room-compiler:$version"
+            const val coroutines = "androidx.room:room-ktx:$version"
+        }
     }
 
     object JUnit {
