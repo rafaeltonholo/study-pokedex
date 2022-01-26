@@ -9,7 +9,7 @@ data class PokemonTypePair(
     @Relation(
         parentColumn = POKEMON_NUMBER_COLUMN,
         entity = PokemonType::class,
-        entityColumn = POKEMON_TYPE_ID_COLUMN,
+        entityColumn = POKEMON_TYPE_PK_COLUMN,
         associateBy = Junction(PokemonWithType::class),
     )
     val types: List<PokemonType>

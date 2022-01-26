@@ -7,5 +7,5 @@ import dev.tonholo.study.pokedex.data.entity.PokemonWithType
 @Dao
 interface PokemonWithTypeDao {
     @Insert
-    fun insert(pokemonWithType: PokemonWithType): Long
+    fun insertAll(entities: List<PokemonWithType>)
 }

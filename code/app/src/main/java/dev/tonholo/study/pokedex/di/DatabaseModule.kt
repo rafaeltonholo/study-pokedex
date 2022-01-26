@@ -7,6 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.tonholo.study.pokedex.data.dao.PokemonDao
+import dev.tonholo.study.pokedex.data.dao.PokemonTypeDao
 import dev.tonholo.study.pokedex.data.dao.PokemonWithTypeDao
 import dev.tonholo.study.pokedex.data.database.AppDatabase
 import javax.inject.Singleton
@@ -23,6 +24,10 @@ object DatabaseModule {
     @Provides
     fun providePokemonDao(appDatabase: AppDatabase): PokemonDao =
         appDatabase.pokemonDao()
+
+    @Provides
+    fun providePokemonTypeDao(appDatabase: AppDatabase): PokemonTypeDao =
+        appDatabase.pokemonTypeDao()
 
     @Provides
     fun providePokemonWithTypeDao(appDatabase: AppDatabase): PokemonWithTypeDao =

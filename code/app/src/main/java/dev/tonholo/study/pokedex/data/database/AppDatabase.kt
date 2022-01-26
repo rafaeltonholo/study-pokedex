@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import dev.tonholo.study.pokedex.data.dao.PokemonDao
+import dev.tonholo.study.pokedex.data.dao.PokemonTypeDao
 import dev.tonholo.study.pokedex.data.dao.PokemonWithTypeDao
 import dev.tonholo.study.pokedex.data.entity.Pokemon
 import dev.tonholo.study.pokedex.data.entity.PokemonType
@@ -23,6 +24,7 @@ private const val DATABASE_NAME = "pokedex_db"
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun pokemonDao(): PokemonDao
+    abstract fun pokemonTypeDao(): PokemonTypeDao
     abstract fun pokemonWithTypeDao(): PokemonWithTypeDao
 
     companion object {

@@ -16,7 +16,7 @@ abstract class PokemonDao {
     abstract fun getPokemonWithType(): Flow<List<PokemonTypePair>>
 
     @Insert
-    abstract fun insert(pokemon: Pokemon): Long
+    abstract suspend fun insert(pokemon: Pokemon): Long
 
     fun getPokemonWithTypeDistinctUntilChanged() =
         getPokemonWithType().distinctUntilChanged()
