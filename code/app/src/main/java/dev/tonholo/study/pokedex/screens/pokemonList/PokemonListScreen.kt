@@ -21,6 +21,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import dev.tonholo.study.pokedex.R
+import dev.tonholo.study.pokedex.data.dao.PokemonDao
+import dev.tonholo.study.pokedex.data.entity.PokemonTypePair
 import dev.tonholo.study.pokedex.data.remote.PokeApi
 import dev.tonholo.study.pokedex.data.remote.responses.Pokemon
 import dev.tonholo.study.pokedex.data.remote.responses.PokemonList
@@ -31,7 +33,9 @@ import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.ui.theme.state.ThemeState
 import dev.tonholo.study.pokedex.ui.theme.state.ThemeStateHandler
 import dev.tonholo.study.pokedex.ui.theme.viewModel.ThemeViewModel
+import dev.tonholo.study.pokedex.usecases.CachePokemonListUseCase
 import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -158,5 +162,18 @@ private fun buildFakeViewModel(): PokemonListViewModel {
                 TODO("Not yet implemented")
             }
         }),
+        CachePokemonListUseCase(object : PokemonDao() {
+            override fun getPokemonWithType(): Flow<List<PokemonTypePair>> {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun insert(pokemon: dev.tonholo.study.pokedex.data.entity.Pokemon): Long {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun insertAll(pokemonList: List<dev.tonholo.study.pokedex.data.entity.Pokemon>) {
+                TODO("Not yet implemented")
+            }
+        })
     )
 }

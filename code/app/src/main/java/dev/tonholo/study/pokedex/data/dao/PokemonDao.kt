@@ -18,6 +18,9 @@ abstract class PokemonDao {
     @Insert
     abstract suspend fun insert(pokemon: Pokemon): Long
 
+    @Insert
+    abstract suspend fun insertAll(pokemonList: List<Pokemon>)
+
     fun getPokemonWithTypeDistinctUntilChanged() =
         getPokemonWithType().distinctUntilChanged()
 }

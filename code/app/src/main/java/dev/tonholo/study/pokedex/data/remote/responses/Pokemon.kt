@@ -2,6 +2,7 @@ package dev.tonholo.study.pokedex.data.remote.responses
 
 
 import com.google.gson.annotations.SerializedName
+import dev.tonholo.study.pokedex.data.entity.Pokemon as EntityPokemon
 
 data class Pokemon(
     val abilities: List<Ability>,
@@ -29,3 +30,21 @@ data class Pokemon(
     val types: List<Type>,
     val weight: Int,
 )
+
+fun Pokemon.getStat(statName: String) =
+    stats.first { it.toAbbreviation().lowercase() == statName }.baseStat
+
+fun Pokemon.toEntity() =
+    EntityPokemon(
+        number = id,
+        name = name,
+        height = height,
+        weight = weight,
+        hpStat = getStat("hp"),
+        attackStat = getStat("atk"),
+        defenseStat = getStat("def"),
+        specialAttackStat = getStat("spatk"),
+        specialDefenseStat = getStat("spdef"),
+        speedStat = getStat("spd"),
+        spriteUrl = sprites.frontDefault,
+    )
