@@ -85,6 +85,8 @@ dependencies {
     implementation(Dependencies.Jetpack.Room.coroutines)
     ksp(Dependencies.Jetpack.Room.ksp)
 
+    implementation(Dependencies.Kotlin.coroutines)
+
     // region [ Test dependencies ]
     testImplementation(Dependencies.JUnit.junit)
     androidTestImplementation(Dependencies.Test.Ext.junit)

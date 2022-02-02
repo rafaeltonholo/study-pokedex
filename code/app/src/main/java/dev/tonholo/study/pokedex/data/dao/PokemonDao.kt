@@ -10,18 +10,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Dao
-abstract class PokemonDao {
+interface PokemonDao {
     @Transaction
     @Query("""
         SELECT * FROM Pokemon
         WHERE number > :cursor AND number < (:cursor + :offset + 1)
         LIMIT :offset
     """)
-    abstract fun getPokemonWithType(cursor: Int = 0, offset: Int): Flow<List<PokemonTypePair>>
+    fun getPokemonWithType(cursor: Int = 0, offset: Int): Flow<List<PokemonTypePair>>
+
+    @Query("SELECT COUNT(1) FROM Pokemon")
+    suspend fun count(): Int
 
     @Insert
-    abstract suspend fun insert(pokemon: Pokemon): Long
+    suspend fun insert(pokemon: Pokemon): Long
 
     @Insert
-    abstract suspend fun insertAll(pokemonList: List<Pokemon>)
+    suspend fun insertAll(pokemonList: List<Pokemon>)
 }
