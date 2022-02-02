@@ -25,20 +25,19 @@ import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
-import dev.tonholo.study.pokedex.data.dao.PokemonDao
-import dev.tonholo.study.pokedex.data.entity.PokemonTypePair
 import dev.tonholo.study.pokedex.data.model.PokemonEntry
-import dev.tonholo.study.pokedex.data.remote.PokeApi
-import dev.tonholo.study.pokedex.data.remote.responses.Pokemon
-import dev.tonholo.study.pokedex.data.remote.responses.PokemonList
 import dev.tonholo.study.pokedex.screens.Routes
 import dev.tonholo.study.pokedex.screens.pokemonList.PokemonListViewModel
+import dev.tonholo.study.pokedex.screens.util.preview.stubs.StubPokemonApi
+import dev.tonholo.study.pokedex.screens.util.preview.stubs.StubPokemonDao
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.ui.theme.RobotoCondensed
 import dev.tonholo.study.pokedex.usecases.CachePokemonListUseCase
-import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
-import kotlinx.coroutines.flow.Flow
+import dev.tonholo.study.pokedex.usecases.GetPokemonListFromDatabaseUseCase
+import dev.tonholo.study.pokedex.usecases.GetPokemonListFromRemoteUseCase
+import kotlinx.coroutines.FlowPreview
 
+@FlowPreview
 @ExperimentalCoilApi
 @Composable
 fun PokedexRow(
@@ -71,6 +70,7 @@ fun PokedexRow(
     }
 }
 
+@FlowPreview
 @ExperimentalCoilApi
 @Composable
 private fun PokedexEntry(
@@ -152,32 +152,7 @@ private fun PokedexEntry(
     }
 }
 
-private object StubPokemonApi : PokeApi {
-    override suspend fun getPokemonList(limit: Int, offset: Int): PokemonList {
-        throw NotImplementedError()
-    }
-
-    override suspend fun getPokemon(name: String): Pokemon {
-        throw NotImplementedError()
-    }
-
-}
-
-private object StubPokemonDao : PokemonDao() {
-    override fun getPokemonWithType(): Flow<List<PokemonTypePair>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun insert(pokemon: dev.tonholo.study.pokedex.data.entity.Pokemon): Long {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun insertAll(pokemonList: List<dev.tonholo.study.pokedex.data.entity.Pokemon>) {
-        TODO("Not yet implemented")
-    }
-
-}
-
+@FlowPreview
 @ExperimentalCoilApi
 @Preview(
     showBackground = true,
@@ -205,7 +180,8 @@ private fun LightThemePreview() {
                     entries = entries,
                     navController = navController,
                     viewModel = PokemonListViewModel(
-                        GetPokemonListUseCase(StubPokemonApi),
+                        GetPokemonListFromRemoteUseCase(StubPokemonApi),
+                        GetPokemonListFromDatabaseUseCase(StubPokemonDao),
                         CachePokemonListUseCase(StubPokemonDao),
                     ),
                 )
@@ -214,6 +190,7 @@ private fun LightThemePreview() {
     }
 }
 
+@FlowPreview
 @ExperimentalCoilApi
 @Preview(
     showBackground = true,
@@ -246,7 +223,8 @@ private fun DarkThemePreview() {
                     entries = entries,
                     navController = navController,
                     viewModel = PokemonListViewModel(
-                        GetPokemonListUseCase(StubPokemonApi),
+                        GetPokemonListFromRemoteUseCase(StubPokemonApi),
+                        GetPokemonListFromDatabaseUseCase(StubPokemonDao),
                         CachePokemonListUseCase(StubPokemonDao),
                     ),
                 )

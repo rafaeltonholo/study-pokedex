@@ -6,7 +6,7 @@ import dev.tonholo.study.pokedex.data.remote.responses.PokemonList
 import dev.tonholo.study.pokedex.data.remote.responses.PokemonListResult
 import dev.tonholo.study.pokedex.usecases.base.UseCaseFlowable
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -32,25 +32,25 @@ class GetPokemonListFromDatabaseUseCase @Inject constructor(
         emit(Result.IsLoading)
 
         try {
-            pokemonDao.getPokemonWithType(cursor, offset)
-                .map {
-                    PokemonList(
-                        count = pokemonDao.count(),
-                        results = it.map { (pokemon, _) ->
-                            PokemonListResult(
-                                name = pokemon.name,
-                                url = pokemon.spriteUrl,
-                                number = pokemon.number,
-                            )
-                        }
-                    )
-                }
-                .collect {
-                    emit(Result.Success(it))
-                }
+            emitAll(
+                pokemonDao.getPokemonWithType(cursor, offset)
+                    .map {
+                        PokemonList(
+                            count = pokemonDao.count(),
+                            results = it.map { (pokemon, _) ->
+                                PokemonListResult(
+                                    name = pokemon.name,
+                                    url = pokemon.spriteUrl,
+                                    number = pokemon.number,
+                                )
+                            }
+                        )
+                    }
+                    .map { Result.Success(it) }
+            )
         } catch (e: Exception) {
             Log.e(TAG, "invoke: Unknown exception", e)
-            Result.Failure("An unknown error occurred.", e)
+            emit(Result.Failure("An unknown error occurred.", e))
         }
-    }.distinctUntilChanged()
+    }
 }
