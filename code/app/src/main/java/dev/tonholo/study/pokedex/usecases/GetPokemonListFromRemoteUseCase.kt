@@ -7,11 +7,11 @@ import dev.tonholo.study.pokedex.usecases.base.UseCase
 import java.lang.Exception
 import javax.inject.Inject
 
-private const val TAG = "GetPokemonListUseCase"
+private const val TAG = "GetPokemonListRemote"
 
-class GetPokemonListUseCase @Inject constructor(
+class GetPokemonListFromRemoteUseCase @Inject constructor(
     private val pokeApi: PokeApi,
-): UseCase<GetPokemonListUseCase.Params, GetPokemonListUseCase.Result>() {
+): UseCase<GetPokemonListFromRemoteUseCase.Params, GetPokemonListFromRemoteUseCase.Result>() {
     data class Params(
         val limit: Int = 0,
         val offset: Int = 0,
