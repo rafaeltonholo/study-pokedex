@@ -16,7 +16,6 @@ import dev.tonholo.study.pokedex.usecases.GetPokemonListFromRemoteUseCase
 import dev.tonholo.study.pokedex.util.Resource
 import dev.tonholo.study.pokedex.util.toTitleCase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -27,7 +26,6 @@ import javax.inject.Inject
 private const val PAGE_SIZE = 20
 private const val TAG = "PokemonListViewModel"
 
-@FlowPreview
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
     val getPokemonListFromRemoteUseCase: GetPokemonListFromRemoteUseCase,

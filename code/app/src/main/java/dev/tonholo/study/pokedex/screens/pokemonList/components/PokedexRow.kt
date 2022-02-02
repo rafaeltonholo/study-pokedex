@@ -35,9 +35,7 @@ import dev.tonholo.study.pokedex.ui.theme.RobotoCondensed
 import dev.tonholo.study.pokedex.usecases.CachePokemonListUseCase
 import dev.tonholo.study.pokedex.usecases.GetPokemonListFromDatabaseUseCase
 import dev.tonholo.study.pokedex.usecases.GetPokemonListFromRemoteUseCase
-import kotlinx.coroutines.FlowPreview
 
-@FlowPreview
 @ExperimentalCoilApi
 @Composable
 fun PokedexRow(
@@ -70,7 +68,6 @@ fun PokedexRow(
     }
 }
 
-@FlowPreview
 @ExperimentalCoilApi
 @Composable
 private fun PokedexEntry(
@@ -152,7 +149,6 @@ private fun PokedexEntry(
     }
 }
 
-@FlowPreview
 @ExperimentalCoilApi
 @Preview(
     showBackground = true,
@@ -190,7 +186,6 @@ private fun LightThemePreview() {
     }
 }
 
-@FlowPreview
 @ExperimentalCoilApi
 @Preview(
     showBackground = true,

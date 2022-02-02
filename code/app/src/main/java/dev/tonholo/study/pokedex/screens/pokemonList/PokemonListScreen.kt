@@ -34,11 +34,9 @@ import dev.tonholo.study.pokedex.ui.theme.viewModel.ThemeViewModel
 import dev.tonholo.study.pokedex.usecases.CachePokemonListUseCase
 import dev.tonholo.study.pokedex.usecases.GetPokemonListFromDatabaseUseCase
 import dev.tonholo.study.pokedex.usecases.GetPokemonListFromRemoteUseCase
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-@FlowPreview
 @ExperimentalCoilApi
 @Composable
 fun PokemonListScreen(
@@ -91,7 +89,6 @@ fun PokemonListScreen(
     }
 }
 
-@FlowPreview
 @ExperimentalCoilApi
 @Preview
 @Composable
@@ -106,7 +103,6 @@ private fun LightThemePreview() {
     }
 }
 
-@FlowPreview
 @ExperimentalCoilApi
 @Preview(
     showBackground = true,
@@ -140,7 +136,6 @@ private fun buildPreviewThemeViewModel(themeState: ThemeState) =
         }
     )
 
-@FlowPreview
 private fun buildFakeViewModel(): PokemonListViewModel {
     val entries = (0..100).map {
         PokemonListResult(
