@@ -18,6 +18,8 @@ object Dependencies {
 
     object Kotlin {
         const val version = "1.5.31"
+        // https://github.com/Kotlin/kotlinx.coroutines/releases
+        const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
     }
 
     object Material {
