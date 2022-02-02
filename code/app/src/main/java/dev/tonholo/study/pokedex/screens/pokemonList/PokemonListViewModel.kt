@@ -9,7 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tonholo.study.pokedex.data.model.PokemonEntry
+import dev.tonholo.study.pokedex.usecases.CachePokemonDetailUseCase
+import dev.tonholo.study.pokedex.usecases.CachePokemonListUseCase
 import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
+import dev.tonholo.study.pokedex.util.toTitleCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -20,6 +23,7 @@ const val PAGE_SIZE = 20
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
     val getPokemonListUseCase: GetPokemonListUseCase,
+    val cachePokemonListUseCase: CachePokemonListUseCase,
 ) : ViewModel() {
     private var currentPage = 0
 
@@ -58,13 +62,13 @@ class PokemonListViewModel @Inject constructor(
                                 "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${number}.png"
 
                             PokemonEntry(
-                                pokemonName = entry.name.replaceFirstChar {
-                                    if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
-                                },
+                                pokemonName = entry.name.toTitleCase(),
                                 imageUrl = url,
                                 number = number.toInt()
                             )
                         }
+
+                        // cachePokemonListUseCase(pokedexEntries)
                         pokemonList.value += pokedexEntries
                     }
                     isLoading.value = false

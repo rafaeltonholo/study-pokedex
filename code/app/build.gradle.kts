@@ -6,6 +6,7 @@ plugins {
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
     id("androidx.navigation.safeargs.kotlin")
+    id("com.google.devtools.ksp") version "1.5.31-1.0.0"
 }
 
 android {
@@ -79,6 +80,10 @@ dependencies {
     implementation(Dependencies.Coil.compose)
 
     implementation(Dependencies.Jetpack.DataStore.preferences)
+
+    implementation(Dependencies.Jetpack.Room.runtime)
+    implementation(Dependencies.Jetpack.Room.coroutines)
+    ksp(Dependencies.Jetpack.Room.ksp)
 
     // region [ Test dependencies ]
     testImplementation(Dependencies.JUnit.junit)
