@@ -12,15 +12,16 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 @Dao
 abstract class PokemonDao {
     @Transaction
-    @Query("SELECT * FROM Pokemon")
-    abstract fun getPokemonWithType(): Flow<List<PokemonTypePair>>
+    @Query("""
+        SELECT * FROM Pokemon
+        WHERE number > :cursor AND number < (:cursor + :offset + 1)
+        LIMIT :offset
+    """)
+    abstract fun getPokemonWithType(cursor: Int = 0, offset: Int): Flow<List<PokemonTypePair>>
 
     @Insert
     abstract suspend fun insert(pokemon: Pokemon): Long
 
     @Insert
     abstract suspend fun insertAll(pokemonList: List<Pokemon>)
-
-    fun getPokemonWithTypeDistinctUntilChanged() =
-        getPokemonWithType().distinctUntilChanged()
 }
