@@ -9,9 +9,9 @@ import javax.inject.Inject
 
 private const val TAG = "GetPokemonListUseCase"
 
-class GetPokemonListUseCase @Inject constructor(
+class GetPokemonListFromRemoteUseCase @Inject constructor(
     private val pokeApi: PokeApi,
-): UseCase<GetPokemonListUseCase.Params, GetPokemonListUseCase.Result>() {
+): UseCase<GetPokemonListFromRemoteUseCase.Params, GetPokemonListFromRemoteUseCase.Result>() {
     data class Params(
         val limit: Int = 0,
         val offset: Int = 0,
