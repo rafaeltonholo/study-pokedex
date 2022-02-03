@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,12 +20,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import dev.tonholo.study.pokedex.R
-import dev.tonholo.study.pokedex.data.dao.PokemonDao
-import dev.tonholo.study.pokedex.data.entity.PokemonTypePair
-import dev.tonholo.study.pokedex.data.remote.PokeApi
-import dev.tonholo.study.pokedex.data.remote.responses.Pokemon
-import dev.tonholo.study.pokedex.data.remote.responses.PokemonList
-import dev.tonholo.study.pokedex.data.remote.responses.PokemonListResult
 import dev.tonholo.study.pokedex.screens.pokemonList.components.PokemonList
 import dev.tonholo.study.pokedex.screens.pokemonList.components.SearchBar
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
@@ -35,7 +28,8 @@ import dev.tonholo.study.pokedex.ui.theme.state.ThemeStateHandler
 import dev.tonholo.study.pokedex.ui.theme.viewModel.ThemeViewModel
 import dev.tonholo.study.pokedex.usecases.CachePokemonListUseCase
 import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
-import kotlinx.coroutines.flow.Flow
+import dev.tonholo.study.pokedex.util.preview.stubs.StubPokemonApi
+import dev.tonholo.study.pokedex.util.preview.stubs.StubPokemonDao
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -138,42 +132,8 @@ private fun buildPreviewThemeViewModel(themeState: ThemeState) =
         }
     )
 
-private fun buildFakeViewModel(): PokemonListViewModel {
-    val entries = (0..100).map {
-        PokemonListResult(
-            name = "Pokemon $it",
-            url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$it.png",
-        )
-    }
-
-
-    return PokemonListViewModel(
-        GetPokemonListUseCase(object : PokeApi {
-            override suspend fun getPokemonList(limit: Int, offset: Int): PokemonList = with(entries) {
-                PokemonList(
-                    count = size,
-                    next = "mock",
-                    previous = "mock",
-                    results = this,
-                )
-            }
-
-            override suspend fun getPokemon(name: String): Pokemon {
-                TODO("Not yet implemented")
-            }
-        }),
-        CachePokemonListUseCase(object : PokemonDao() {
-            override fun getPokemonWithType(): Flow<List<PokemonTypePair>> {
-                TODO("Not yet implemented")
-            }
-
-            override suspend fun insert(pokemon: dev.tonholo.study.pokedex.data.entity.Pokemon): Long {
-                TODO("Not yet implemented")
-            }
-
-            override suspend fun insertAll(pokemonList: List<dev.tonholo.study.pokedex.data.entity.Pokemon>) {
-                TODO("Not yet implemented")
-            }
-        })
+private fun buildFakeViewModel(): PokemonListViewModel =
+    PokemonListViewModel(
+        GetPokemonListUseCase(StubPokemonApi),
+        CachePokemonListUseCase(StubPokemonDao)
     )
-}

@@ -37,6 +37,8 @@ import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.ui.theme.RobotoCondensed
 import dev.tonholo.study.pokedex.usecases.CachePokemonListUseCase
 import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
+import dev.tonholo.study.pokedex.util.preview.stubs.StubPokemonApi
+import dev.tonholo.study.pokedex.util.preview.stubs.StubPokemonDao
 import kotlinx.coroutines.flow.Flow
 
 @ExperimentalCoilApi
@@ -150,32 +152,6 @@ private fun PokedexEntry(
             )
         }
     }
-}
-
-private object StubPokemonApi : PokeApi {
-    override suspend fun getPokemonList(limit: Int, offset: Int): PokemonList {
-        throw NotImplementedError()
-    }
-
-    override suspend fun getPokemon(name: String): Pokemon {
-        throw NotImplementedError()
-    }
-
-}
-
-private object StubPokemonDao : PokemonDao() {
-    override fun getPokemonWithType(): Flow<List<PokemonTypePair>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun insert(pokemon: dev.tonholo.study.pokedex.data.entity.Pokemon): Long {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun insertAll(pokemonList: List<dev.tonholo.study.pokedex.data.entity.Pokemon>) {
-        TODO("Not yet implemented")
-    }
-
 }
 
 @ExperimentalCoilApi
