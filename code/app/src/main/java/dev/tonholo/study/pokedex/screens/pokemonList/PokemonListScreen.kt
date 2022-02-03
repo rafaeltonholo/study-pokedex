@@ -27,7 +27,8 @@ import dev.tonholo.study.pokedex.ui.theme.state.ThemeState
 import dev.tonholo.study.pokedex.ui.theme.state.ThemeStateHandler
 import dev.tonholo.study.pokedex.ui.theme.viewModel.ThemeViewModel
 import dev.tonholo.study.pokedex.usecases.CachePokemonListUseCase
-import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
+import dev.tonholo.study.pokedex.usecases.GetPokemonListFromDatabaseUseCase
+import dev.tonholo.study.pokedex.usecases.GetPokemonListFromRemoteUseCase
 import dev.tonholo.study.pokedex.util.preview.stubs.StubPokemonApi
 import dev.tonholo.study.pokedex.util.preview.stubs.StubPokemonDao
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -134,6 +135,7 @@ private fun buildPreviewThemeViewModel(themeState: ThemeState) =
 
 private fun buildFakeViewModel(): PokemonListViewModel =
     PokemonListViewModel(
-        GetPokemonListUseCase(StubPokemonApi),
+        GetPokemonListFromRemoteUseCase(StubPokemonApi),
+        GetPokemonListFromDatabaseUseCase(StubPokemonDao),
         CachePokemonListUseCase(StubPokemonDao)
     )

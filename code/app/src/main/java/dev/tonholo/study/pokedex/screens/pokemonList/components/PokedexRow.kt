@@ -25,21 +25,16 @@ import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
-import dev.tonholo.study.pokedex.data.dao.PokemonDao
-import dev.tonholo.study.pokedex.data.entity.PokemonTypePair
 import dev.tonholo.study.pokedex.data.model.PokemonEntry
-import dev.tonholo.study.pokedex.data.remote.PokeApi
-import dev.tonholo.study.pokedex.data.remote.responses.Pokemon
-import dev.tonholo.study.pokedex.data.remote.responses.PokemonList
 import dev.tonholo.study.pokedex.screens.Routes
 import dev.tonholo.study.pokedex.screens.pokemonList.PokemonListViewModel
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.ui.theme.RobotoCondensed
 import dev.tonholo.study.pokedex.usecases.CachePokemonListUseCase
-import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
+import dev.tonholo.study.pokedex.usecases.GetPokemonListFromDatabaseUseCase
+import dev.tonholo.study.pokedex.usecases.GetPokemonListFromRemoteUseCase
 import dev.tonholo.study.pokedex.util.preview.stubs.StubPokemonApi
 import dev.tonholo.study.pokedex.util.preview.stubs.StubPokemonDao
-import kotlinx.coroutines.flow.Flow
 
 @ExperimentalCoilApi
 @Composable
@@ -181,7 +176,8 @@ private fun LightThemePreview() {
                     entries = entries,
                     navController = navController,
                     viewModel = PokemonListViewModel(
-                        GetPokemonListUseCase(StubPokemonApi),
+                        GetPokemonListFromRemoteUseCase(StubPokemonApi),
+                        GetPokemonListFromDatabaseUseCase(StubPokemonDao),
                         CachePokemonListUseCase(StubPokemonDao),
                     ),
                 )
@@ -222,7 +218,8 @@ private fun DarkThemePreview() {
                     entries = entries,
                     navController = navController,
                     viewModel = PokemonListViewModel(
-                        GetPokemonListUseCase(StubPokemonApi),
+                        GetPokemonListFromRemoteUseCase(StubPokemonApi),
+                        GetPokemonListFromDatabaseUseCase(StubPokemonDao),
                         CachePokemonListUseCase(StubPokemonDao),
                     ),
                 )
