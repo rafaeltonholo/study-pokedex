@@ -3,26 +3,33 @@ package dev.tonholo.study.pokedex.screens.pokemonList
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tonholo.study.pokedex.data.model.PokemonEntry
-import dev.tonholo.study.pokedex.usecases.CachePokemonDetailUseCase
 import dev.tonholo.study.pokedex.usecases.CachePokemonListUseCase
-import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
+import dev.tonholo.study.pokedex.usecases.GetPokemonListFromDatabaseUseCase
+import dev.tonholo.study.pokedex.usecases.GetPokemonListFromRemoteUseCase
+import dev.tonholo.study.pokedex.util.Resource
+import dev.tonholo.study.pokedex.util.networkBoundResource
 import dev.tonholo.study.pokedex.util.toTitleCase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
 const val PAGE_SIZE = 20
 
+private const val TAG = "PokemonListViewModel"
+
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
-    val getPokemonListUseCase: GetPokemonListUseCase,
+    val getPokemonListFromRemoteUseCase: GetPokemonListFromRemoteUseCase,
+    val getPokemonListFromDatabaseUseCase: GetPokemonListFromDatabaseUseCase,
     val cachePokemonListUseCase: CachePokemonListUseCase,
 ) : ViewModel() {
     private var currentPage = 0
@@ -40,45 +47,100 @@ class PokemonListViewModel @Inject constructor(
     }
 
     fun loadPokemonListPaginated() {
-        viewModelScope.launch {
-            isLoading.value = true
-            val params = GetPokemonListUseCase.Params(
-                limit = PAGE_SIZE,
-                offset = currentPage * PAGE_SIZE,
-            )
+        val offset = PAGE_SIZE
+        val cursor = currentPage * PAGE_SIZE
+        Log.d(TAG, "loadPokemonListPaginated: currentPage = $currentPage")
+        Log.d(TAG, "loadPokemonListPaginated: pokemonList.size = ${pokemonList.value.size}")
+        Log.d(TAG, "loadPokemonListPaginated: isEndReached = $isEndReached")
 
-            when (val result = getPokemonListUseCase(params)) {
-                is GetPokemonListUseCase.Result.Success -> {
-                    with(result.data) {
-                        isEndReached.value = currentPage * PAGE_SIZE >= count
-                        val pokedexEntries = result.data.results.map { entry ->
-                            val number = if (entry.url.endsWith("/")) {
-                                entry.url.dropLast(1).takeLastWhile { it.isDigit() }
-                            } else {
-                                entry.url.takeLastWhile { it.isDigit() }
+        viewModelScope.launch {
+            networkBoundResource(
+                query = {
+                    val params = GetPokemonListFromDatabaseUseCase.Params(
+                        cursor = cursor,
+                        offset = offset,
+                    )
+                    Log.d(TAG, "query: requesting from db with: params = $params")
+                    getPokemonListFromDatabaseUseCase(params)
+                },
+                shouldFetch = { pokemonList ->
+                    pokemonList.results.isEmpty()
+                },
+                fetch = {
+                    val params = GetPokemonListFromRemoteUseCase.Params(
+                        limit = offset,
+                        offset = cursor,
+                    )
+                    Log.d(TAG, "fetch: requesting from remote with: params = $params")
+                    getPokemonListFromRemoteUseCase(params)
+                },
+                saveFetchResult = { result ->
+                    Log.d(TAG, "saveFetchResult: called with: result = $result")
+                    when (result) {
+                        is GetPokemonListFromRemoteUseCase.Result.Failure ->
+                            throw Exception(result.message, result.exception)
+                        is GetPokemonListFromRemoteUseCase.Result.Success -> {
+                            val pokedexEntries = result.data.results.map { entry ->
+                                val number = if (entry.url.endsWith("/")) {
+                                    entry.url.dropLast(1).takeLastWhile { it.isDigit() }
+                                } else {
+                                    entry.url.takeLastWhile { it.isDigit() }
+                                }
+                                val url =
+                                    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${number}.png"
+                                PokemonEntry(
+                                    pokemonName = entry.name.toTitleCase(),
+                                    imageUrl = url,
+                                    number = number.toInt()
+                                )
+                            }
+                            cachePokemonListUseCase(pokedexEntries)
+                        }
+                    }
+                },
+                onFetchSuccess = {
+                    Log.d(TAG, "onFetchSuccess: result = $it")
+                    when (it) {
+                        is GetPokemonListFromRemoteUseCase.Result.Failure -> throw Exception(it.message, it.exception)
+                        is GetPokemonListFromRemoteUseCase.Result.Success -> with(it.data) {
+                            isEndReached.value = currentPage * PAGE_SIZE >= count
+                        }
+                    }
+                }
+            )
+                .collectLatest { resource ->
+                    Log.d(TAG, "collectLatest() called with: resource = $resource")
+                    Log.d(TAG, "collectLatest: pokemonList.size = ${pokemonList.value.size}")
+                    Log.d(TAG, "collectLatest: currentPage = $currentPage")
+
+                    when (resource) {
+                        is Resource.Error -> {
+                            isLoading.value = false
+                            loadingError.value = "${resource.message}\n${resource.throwable?.localizedMessage}"
+                        }
+                        is Resource.Loading -> isLoading.value = true
+                        is Resource.Success -> {
+                            isLoading.value = false
+
+                            resource.data.run {
+                                if (!pokemonList.value.any { it.number == results.first().number }
+                                    && !pokemonList.value.any { it.number == results.last().number }) {
+                                    pokemonList.value += results.map { pokemonListResult ->
+                                        PokemonEntry(
+                                            pokemonName = pokemonListResult.name,
+                                            imageUrl = pokemonListResult.url,
+                                            number = pokemonListResult.number
+                                                ?: throw Exception("Pokemon number must not  be null coming from database"),
+                                        )
+                                    }
+                                    currentPage++
+                                    Log.d(TAG, "collectLatest: pokemonList.size = ${pokemonList.value.size}")
+                                }
                             }
 
-                            val url =
-                                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${number}.png"
-
-                            PokemonEntry(
-                                pokemonName = entry.name.toTitleCase(),
-                                imageUrl = url,
-                                number = number.toInt()
-                            )
                         }
-
-                        // cachePokemonListUseCase(pokedexEntries)
-                        pokemonList.value += pokedexEntries
                     }
-                    isLoading.value = false
-                    currentPage++
                 }
-                is GetPokemonListUseCase.Result.Failure -> {
-                    loadingError.value = "${result.message}\n${result.exception?.message}"
-                    isLoading.value = false
-                }
-            }
         }
     }
 
