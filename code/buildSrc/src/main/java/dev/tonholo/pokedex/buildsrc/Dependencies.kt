@@ -69,11 +69,18 @@ object Dependencies {
             const val compose = "androidx.navigation:navigation-compose:2.4.0-rc01"
         }
 
+        object Paging {
+            private const val version = "3.1.0"
+            const val runtime = "androidx.paging:paging-runtime:$version"
+            const val compose = "androidx.paging:paging-compose:1.0.0-alpha14"
+        }
+
         object Room {
             private const val version = "2.4.0"
             const val runtime = "androidx.room:room-runtime:$version"
             const val ksp = "androidx.room:room-compiler:$version"
             const val coroutines = "androidx.room:room-ktx:$version"
+            const val paging = "androidx.room:room-paging:$version"
         }
     }
 
