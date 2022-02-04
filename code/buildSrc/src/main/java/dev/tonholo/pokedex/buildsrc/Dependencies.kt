@@ -6,7 +6,7 @@ object Dependencies {
     }
 
     object ClassPath {
-        const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.4"
+        const val androidGradlePlugin = "com.android.tools.build:gradle:7.1.0"
         const val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Kotlin.version}"
         const val hiltPlugin = "com.google.dagger:hilt-android-gradle-plugin:${Jetpack.Hilt.version}"
     }
