@@ -7,9 +7,11 @@ import androidx.room.RoomDatabase
 import dev.tonholo.study.pokedex.data.dao.PokemonDao
 import dev.tonholo.study.pokedex.data.dao.PokemonTypeDao
 import dev.tonholo.study.pokedex.data.dao.PokemonWithTypeDao
+import dev.tonholo.study.pokedex.data.dao.RemoteKeyDao
 import dev.tonholo.study.pokedex.data.entity.Pokemon
 import dev.tonholo.study.pokedex.data.entity.PokemonType
 import dev.tonholo.study.pokedex.data.entity.PokemonWithType
+import dev.tonholo.study.pokedex.data.entity.RemoteKey
 
 private const val DATABASE_NAME = "pokedex_db"
 
@@ -18,6 +20,7 @@ private const val DATABASE_NAME = "pokedex_db"
         Pokemon::class,
         PokemonType::class,
         PokemonWithType::class,
+        RemoteKey::class,
     ],
     version = 1,
     exportSchema = false,
@@ -26,6 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun pokemonDao(): PokemonDao
     abstract fun pokemonTypeDao(): PokemonTypeDao
     abstract fun pokemonWithTypeDao(): PokemonWithTypeDao
+    abstract fun remoteKeyDao(): RemoteKeyDao
 
     companion object {
         operator fun invoke(context: Context) =

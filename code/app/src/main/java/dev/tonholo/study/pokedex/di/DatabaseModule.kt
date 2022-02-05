@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import dev.tonholo.study.pokedex.data.dao.PokemonDao
 import dev.tonholo.study.pokedex.data.dao.PokemonTypeDao
 import dev.tonholo.study.pokedex.data.dao.PokemonWithTypeDao
+import dev.tonholo.study.pokedex.data.dao.RemoteKeyDao
 import dev.tonholo.study.pokedex.data.database.AppDatabase
 import javax.inject.Singleton
 
@@ -32,4 +33,8 @@ object DatabaseModule {
     @Provides
     fun providePokemonWithTypeDao(appDatabase: AppDatabase): PokemonWithTypeDao =
         appDatabase.pokemonWithTypeDao()
+
+    @Provides
+    fun provideRemoteKeyDao(appDatabase: AppDatabase): RemoteKeyDao =
+        appDatabase.remoteKeyDao()
 }
