@@ -21,4 +21,5 @@ data class Pokemon(
     @[Nullable ColumnInfo(name = "special_attack_stat")] val specialAttackStat: Int? = null,
     @[Nullable ColumnInfo(name = "special_defense_stat")] val specialDefenseStat: Int? = null,
     @[Nullable ColumnInfo(name = "speed_stat")] val speedStat: Int? = null,
+    @ColumnInfo(name = "last_update") val lastUpdate: Long = System.currentTimeMillis(),
 )

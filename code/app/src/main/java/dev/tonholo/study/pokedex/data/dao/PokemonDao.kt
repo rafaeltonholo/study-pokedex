@@ -14,9 +14,12 @@ interface PokemonDao {
     @Insert
     suspend fun insert(pokemon: Pokemon): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     suspend fun insertAll(pokemonList: List<Pokemon>)
 
     @Query("DELETE FROM Pokemon")
     suspend fun clearAll()
+
+    @Query("SELECT MAX(last_update) FROM Pokemon")
+    fun lastUpdated(): Long?
 }
