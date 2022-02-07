@@ -47,7 +47,7 @@ class PokemonListViewModel @Inject constructor(
             }
             loadState.append is LoadState.Error -> {
                 isLoading.value = false
-                val loadStateError = loadState.refresh as LoadState.Error
+                val loadStateError = loadState.append as LoadState.Error
                 loadingError.value = loadStateError.error.localizedMessage ?: "Unhandled error"
             }
             loadState.refresh is LoadState.NotLoading && loadState.append is LoadState.NotLoading ->
