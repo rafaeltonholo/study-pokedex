@@ -25,15 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import androidx.paging.ExperimentalPagingApi
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import dev.tonholo.study.pokedex.R
 import dev.tonholo.study.pokedex.data.model.PokemonEntry
-import dev.tonholo.study.pokedex.screens.Routes
 import dev.tonholo.study.pokedex.screens.pokemonList.PokemonListViewModel
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.ui.theme.RobotoCondensed
@@ -46,24 +43,24 @@ import dev.tonholo.study.pokedex.util.toGreyscale
 fun PokedexRow(
     first: PokemonEntry,
     last: PokemonEntry?,
-    navController: NavController,
     viewModel: PokemonListViewModel = hiltViewModel(),
+    onItemClick: (entry: PokemonEntry, dominantColor: Int) -> Unit = { _, _ -> },
 ) {
     Column {
         Row {
             PokedexEntry(
                 entry = first,
-                navController = navController,
                 modifier = Modifier.weight(1f),
                 viewModel,
+                onItemClick,
             )
             Spacer(modifier = Modifier.width(16.dp))
             if (last != null) {
                 PokedexEntry(
                     entry = last,
-                    navController = navController,
                     modifier = Modifier.weight(1f),
                     viewModel,
+                    onItemClick,
                 )
             } else {
                 Spacer(modifier = Modifier.weight(1f))
@@ -78,9 +75,9 @@ fun PokedexRow(
 @Composable
 private fun PokedexEntry(
     entry: PokemonEntry,
-    navController: NavController,
     modifier: Modifier = Modifier,
     viewModel: PokemonListViewModel,
+    onItemClick: (entry: PokemonEntry, dominantColor: Int) -> Unit = { _, _ -> },
 ) {
     var colorAnimationPlayed by remember { mutableStateOf(false) }
     val defaultDominantColor = MaterialTheme.colors.surface
@@ -115,9 +112,7 @@ private fun PokedexEntry(
                 )
             )
             .clickable {
-                navController.navigate(
-                    Routes.PokemonDetails.build(entry.pokemonName, dominantColor.toArgb())
-                )
+                onItemClick(entry, dominantColor.toArgb())
             }
     ) {
         Column {
@@ -181,7 +176,6 @@ private fun PokedexEntry(
 @Composable
 private fun LightThemePreview() {
     PokedexAppThemePreview {
-        val navController = rememberNavController()
         val entries = (0..2).map {
             PokemonEntry(
                 "Pokemon $it",
@@ -195,7 +189,6 @@ private fun LightThemePreview() {
                 PokedexRow(
                     first = entries[index],
                     last = if (index + 1 >= entries.size) null else entries[index + 1],
-                    navController = navController,
                     viewModel = PokemonListViewModel(
                         getPokemonListUseCaseStub
                     ),
@@ -214,7 +207,6 @@ private fun LightThemePreview() {
 @Composable
 private fun DarkThemePreview() {
     PokedexAppThemePreview(darkTheme = true) {
-        val navController = rememberNavController()
         val entries = (0 until 4).map {
             PokemonEntry(
                 "Pokemon $it",
@@ -232,7 +224,6 @@ private fun DarkThemePreview() {
                 PokedexRow(
                     first = entries[index],
                     last = if (index + 1 >= entries.size) null else entries[index + 1],
-                    navController = navController,
                     viewModel = PokemonListViewModel(
                         getPokemonListUseCaseStub,
                     ),
