@@ -23,7 +23,7 @@ object StubPokemonDao : PokemonDao {
         TODO("Not yet implemented")
     }
 
-    override fun lastUpdated(): Long {
+    override suspend fun lastUpdated(): Long {
         TODO("Not yet implemented")
     }
 }

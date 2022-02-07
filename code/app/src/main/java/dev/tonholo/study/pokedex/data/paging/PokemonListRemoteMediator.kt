@@ -32,13 +32,17 @@ class PokemonListRemoteMediator @Inject constructor(
 
     override suspend fun initialize(): InitializeAction {
         val now = System.currentTimeMillis()
-        val lastUpdated = withContext(Dispatchers.IO) {
-            pokemonDao.lastUpdated()
-        } ?: now
-        Log.d(TAG, "initialize: lastUpdated = $lastUpdated")
         val cacheTimeout = TimeUnit.MILLISECONDS.convert(CACHE_TIMEOUT_IN_DAYS, TimeUnit.DAYS)
         Log.d(TAG, "initialize: cacheTimeout = $cacheTimeout")
-        return if (now - lastUpdated <= cacheTimeout) {
+
+        val lastUpdated = withContext(Dispatchers.IO) {
+            pokemonDao.lastUpdated()
+        } ?: now - cacheTimeout
+        Log.d(TAG, "initialize: lastUpdated = $lastUpdated")
+        Log.d(TAG, "initialize: now = $now")
+        val shouldSkipCacheInvalidation = now - lastUpdated < cacheTimeout
+        Log.d(TAG, "initialize: shouldSkipCacheInvalidation = $shouldSkipCacheInvalidation")
+        return if (shouldSkipCacheInvalidation) {
             // Cached data is up-to-date, so there is no need to re-fetch from network.
             InitializeAction.SKIP_INITIAL_REFRESH
         } else {

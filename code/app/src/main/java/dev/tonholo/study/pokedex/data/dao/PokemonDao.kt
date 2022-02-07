@@ -21,5 +21,5 @@ interface PokemonDao {
     suspend fun clearAll()
 
     @Query("SELECT MAX(last_update) FROM Pokemon")
-    fun lastUpdated(): Long?
+    suspend fun lastUpdated(): Long?
 }
