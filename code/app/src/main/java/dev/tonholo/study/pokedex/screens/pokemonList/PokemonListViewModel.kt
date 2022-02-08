@@ -7,12 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.LoadState
+import androidx.paging.cachedIn
+import androidx.paging.compose.LazyPagingItems
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tonholo.study.pokedex.data.model.PokemonEntry
-import dev.tonholo.study.pokedex.usecases.CachePokemonDetailUseCase
-import dev.tonholo.study.pokedex.usecases.CachePokemonListUseCase
 import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
-import dev.tonholo.study.pokedex.util.toTitleCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -20,65 +21,38 @@ import javax.inject.Inject
 
 const val PAGE_SIZE = 20
 
+@ExperimentalPagingApi
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
-    val getPokemonListUseCase: GetPokemonListUseCase,
-    val cachePokemonListUseCase: CachePokemonListUseCase,
+    getPokemonListUseCase: GetPokemonListUseCase,
 ) : ViewModel() {
-    private var currentPage = 0
-
-    val pokemonList = mutableStateOf<List<PokemonEntry>>(listOf())
-    val loadingError = mutableStateOf("")
     val isLoading = mutableStateOf(false)
-    val isEndReached = mutableStateOf(false)
+    val loadingError = mutableStateOf("")
     val isSearching = mutableStateOf(false)
+    val pokemonList = getPokemonListUseCase().cachedIn(viewModelScope)
 
+    var currentSearchingList = mutableStateOf(listOf<PokemonEntry>())
     private var cachedPokemonList = listOf<PokemonEntry>()
 
-    init {
-        loadPokemonListPaginated()
-    }
+    fun handleLoadState(lazyPagingItems: LazyPagingItems<PokemonEntry>) {
+        if (!isSearching.value) currentSearchingList.value = lazyPagingItems.itemSnapshotList.items
 
-    fun loadPokemonListPaginated() {
-        viewModelScope.launch {
-            isLoading.value = true
-            val params = GetPokemonListUseCase.Params(
-                limit = PAGE_SIZE,
-                offset = currentPage * PAGE_SIZE,
-            )
-
-            when (val result = getPokemonListUseCase(params)) {
-                is GetPokemonListUseCase.Result.Success -> {
-                    with(result.data) {
-                        isEndReached.value = currentPage * PAGE_SIZE >= count
-                        val pokedexEntries = result.data.results.map { entry ->
-                            val number = if (entry.url.endsWith("/")) {
-                                entry.url.dropLast(1).takeLastWhile { it.isDigit() }
-                            } else {
-                                entry.url.takeLastWhile { it.isDigit() }
-                            }
-
-                            val url =
-                                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${number}.png"
-
-                            PokemonEntry(
-                                pokemonName = entry.name.toTitleCase(),
-                                imageUrl = url,
-                                number = number.toInt()
-                            )
-                        }
-
-                        // cachePokemonListUseCase(pokedexEntries)
-                        pokemonList.value += pokedexEntries
-                    }
-                    isLoading.value = false
-                    currentPage++
-                }
-                is GetPokemonListUseCase.Result.Failure -> {
-                    loadingError.value = "${result.message}\n${result.exception?.message}"
-                    isLoading.value = false
-                }
+        val loadState = lazyPagingItems.loadState
+        when  {
+            loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading ->
+                isLoading.value = true
+            loadState.refresh is LoadState.Error -> {
+                isLoading.value = false
+                val loadStateError = loadState.refresh as LoadState.Error
+                loadingError.value = loadStateError.error.localizedMessage ?: "Unhandled error"
             }
+            loadState.append is LoadState.Error -> {
+                isLoading.value = false
+                val loadStateError = loadState.append as LoadState.Error
+                loadingError.value = loadStateError.error.localizedMessage ?: "Unhandled error"
+            }
+            loadState.refresh is LoadState.NotLoading && loadState.append is LoadState.NotLoading ->
+                isLoading.value = false
         }
     }
 
@@ -86,12 +60,12 @@ class PokemonListViewModel @Inject constructor(
         val listToSearch = if (isSearching.value) {
             cachedPokemonList
         } else {
-            pokemonList.value
+            currentSearchingList.value
         }
 
         viewModelScope.launch(Dispatchers.Default) {
             if (query.isBlank()) {
-                pokemonList.value = cachedPokemonList
+                currentSearchingList.value = cachedPokemonList
                 isSearching.value = false
                 return@launch
             }
@@ -104,11 +78,11 @@ class PokemonListViewModel @Inject constructor(
             }
 
             if (!isSearching.value) {
-                cachedPokemonList = pokemonList.value
+                cachedPokemonList = currentSearchingList.value
                 isSearching.value = true
             }
 
-            pokemonList.value = results
+            currentSearchingList.value = results
         }
     }
 

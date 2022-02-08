@@ -83,7 +83,11 @@ dependencies {
 
     implementation(Dependencies.Jetpack.Room.runtime)
     implementation(Dependencies.Jetpack.Room.coroutines)
+    implementation(Dependencies.Jetpack.Room.paging)
     ksp(Dependencies.Jetpack.Room.ksp)
+
+    implementation(Dependencies.Jetpack.Paging.runtime)
+    implementation(Dependencies.Jetpack.Paging.compose)
 
     // region [ Test dependencies ]
     testImplementation(Dependencies.JUnit.junit)

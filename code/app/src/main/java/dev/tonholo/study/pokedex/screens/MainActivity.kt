@@ -1,26 +1,25 @@
 package dev.tonholo.study.pokedex.screens
 
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.paging.ExperimentalPagingApi
 import coil.annotation.ExperimentalCoilApi
 import dagger.hilt.android.AndroidEntryPoint
-import dev.tonholo.study.pokedex.R
 import dev.tonholo.study.pokedex.screens.pokemonDetail.PokemonDetailScreen
 import dev.tonholo.study.pokedex.screens.pokemonList.PokemonListScreen
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
 
+@ExperimentalPagingApi
 @ExperimentalCoilApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -48,7 +47,7 @@ class MainActivity : ComponentActivity() {
                             }
                         ),
                     ) {
-                        window.statusBarColor = ContextCompat.getColor(this@MainActivity, android.R.color.black)
+                        window.statusBarColor = Color.Black.toArgb()
                         val pokemonName = remember {
                             it.arguments?.getString(Routes.PokemonDetails.Params.pokemonName)
                                 ?: throw IllegalArgumentException(

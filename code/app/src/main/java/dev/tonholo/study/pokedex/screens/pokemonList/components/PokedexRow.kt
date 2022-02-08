@@ -1,6 +1,8 @@
 package dev.tonholo.study.pokedex.screens.pokemonList.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,54 +16,51 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import androidx.paging.ExperimentalPagingApi
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
-import dev.tonholo.study.pokedex.data.dao.PokemonDao
-import dev.tonholo.study.pokedex.data.entity.PokemonTypePair
+import dev.tonholo.study.pokedex.R
 import dev.tonholo.study.pokedex.data.model.PokemonEntry
-import dev.tonholo.study.pokedex.data.remote.PokeApi
-import dev.tonholo.study.pokedex.data.remote.responses.Pokemon
-import dev.tonholo.study.pokedex.data.remote.responses.PokemonList
-import dev.tonholo.study.pokedex.screens.Routes
 import dev.tonholo.study.pokedex.screens.pokemonList.PokemonListViewModel
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.ui.theme.RobotoCondensed
-import dev.tonholo.study.pokedex.usecases.CachePokemonListUseCase
-import dev.tonholo.study.pokedex.usecases.GetPokemonListUseCase
-import kotlinx.coroutines.flow.Flow
+import dev.tonholo.study.pokedex.util.preview.stubs.getPokemonListUseCaseStub
+import dev.tonholo.study.pokedex.util.toGreyscale
 
+@ExperimentalPagingApi
 @ExperimentalCoilApi
 @Composable
 fun PokedexRow(
-    rowIndex: Int,
-    entries: List<PokemonEntry>,
-    navController: NavController,
+    first: PokemonEntry,
+    last: PokemonEntry?,
     viewModel: PokemonListViewModel = hiltViewModel(),
+    onItemClick: (entry: PokemonEntry, dominantColor: Int) -> Unit = { _, _ -> },
 ) {
     Column {
         Row {
             PokedexEntry(
-                entry = entries[rowIndex * 2],
-                navController = navController,
+                entry = first,
                 modifier = Modifier.weight(1f),
                 viewModel,
+                onItemClick,
             )
             Spacer(modifier = Modifier.width(16.dp))
-            if (entries.size >= rowIndex * 2 + 2) {
+            if (last != null) {
                 PokedexEntry(
-                    entry = entries[rowIndex * 2 + 1],
-                    navController = navController,
+                    entry = last,
                     modifier = Modifier.weight(1f),
                     viewModel,
+                    onItemClick,
                 )
             } else {
                 Spacer(modifier = Modifier.weight(1f))
@@ -71,17 +70,32 @@ fun PokedexRow(
     }
 }
 
+@ExperimentalPagingApi
 @ExperimentalCoilApi
 @Composable
 private fun PokedexEntry(
     entry: PokemonEntry,
-    navController: NavController,
     modifier: Modifier = Modifier,
     viewModel: PokemonListViewModel,
+    onItemClick: (entry: PokemonEntry, dominantColor: Int) -> Unit = { _, _ -> },
 ) {
+    var colorAnimationPlayed by remember { mutableStateOf(false) }
     val defaultDominantColor = MaterialTheme.colors.surface
     var dominantColor by remember {
         mutableStateOf(defaultDominantColor)
+    }
+    val animDurationMillis = 500
+    val currentColor by animateColorAsState(
+        targetValue = if (!colorAnimationPlayed) MaterialTheme.colors.onSurface else dominantColor,
+        animationSpec = tween(durationMillis = animDurationMillis)
+    )
+
+    val context = LocalContext.current
+    val placeholder = remember {
+        ContextCompat.getDrawable(context, R.drawable.ic_pokeball)
+            ?.apply {
+                toGreyscale()
+            }
     }
 
     Box(
@@ -92,22 +106,21 @@ private fun PokedexEntry(
             .background(
                 Brush.verticalGradient(
                     listOf(
-                        dominantColor,
+                        currentColor,
                         defaultDominantColor,
                     )
                 )
             )
             .clickable {
-                navController.navigate(
-                    Routes.PokemonDetails.build(entry.pokemonName, dominantColor.toArgb())
-                )
+                onItemClick(entry, dominantColor.toArgb())
             }
     ) {
         Column {
             val painter = rememberImagePainter(
                 data = entry.imageUrl,
                 builder = {
-                    crossfade(true)
+                    crossfade(animDurationMillis)
+                    placeholder(placeholder)
                 }
             )
 
@@ -116,21 +129,6 @@ private fun PokedexEntry(
                     .size(120.dp)
                     .align(Alignment.CenterHorizontally)
             ) {
-                when (val painterState = painter.state) {
-                    is ImagePainter.State.Loading -> {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colors.primary,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                        )
-                    }
-                    is ImagePainter.State.Success -> {
-                        dominantColor = viewModel.getDominantColor(painterState.result.drawable)
-                    }
-                    else -> {
-                        // no-op
-                    }
-                }
                 Image(
                     painter = painter,
                     contentDescription = entry.pokemonName,
@@ -138,6 +136,24 @@ private fun PokedexEntry(
                         .fillMaxSize()
                         .align(Alignment.Center),
                 )
+                when (val painterState = painter.state) {
+                    is ImagePainter.State.Loading -> {
+                        CircularProgressIndicator(
+                            color = Color.Red,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                        )
+                    }
+                    is ImagePainter.State.Success -> {
+                        LaunchedEffect(Unit) {
+                            colorAnimationPlayed = true
+                        }
+                        dominantColor = viewModel.getDominantColor(painterState.result.drawable)
+                    }
+                    else -> {
+                        // no-op
+                    }
+                }
             }
 
             Text(
@@ -152,32 +168,7 @@ private fun PokedexEntry(
     }
 }
 
-private object StubPokemonApi : PokeApi {
-    override suspend fun getPokemonList(limit: Int, offset: Int): PokemonList {
-        throw NotImplementedError()
-    }
-
-    override suspend fun getPokemon(name: String): Pokemon {
-        throw NotImplementedError()
-    }
-
-}
-
-private object StubPokemonDao : PokemonDao() {
-    override fun getPokemonWithType(): Flow<List<PokemonTypePair>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun insert(pokemon: dev.tonholo.study.pokedex.data.entity.Pokemon): Long {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun insertAll(pokemonList: List<dev.tonholo.study.pokedex.data.entity.Pokemon>) {
-        TODO("Not yet implemented")
-    }
-
-}
-
+@ExperimentalPagingApi
 @ExperimentalCoilApi
 @Preview(
     showBackground = true,
@@ -185,7 +176,6 @@ private object StubPokemonDao : PokemonDao() {
 @Composable
 private fun LightThemePreview() {
     PokedexAppThemePreview {
-        val navController = rememberNavController()
         val entries = (0..2).map {
             PokemonEntry(
                 "Pokemon $it",
@@ -193,20 +183,14 @@ private fun LightThemePreview() {
                 number = it,
             )
         }
-        val itemCount = if (entries.size % 2 == 0) {
-            entries.size / 2
-        } else {
-            entries.size / 2 + 1
-        }
+
         Column(modifier = Modifier.padding(32.dp)) {
-            for (index in 0 until itemCount) {
+            for (index in entries.indices step 2) {
                 PokedexRow(
-                    rowIndex = index,
-                    entries = entries,
-                    navController = navController,
+                    first = entries[index],
+                    last = if (index + 1 >= entries.size) null else entries[index + 1],
                     viewModel = PokemonListViewModel(
-                        GetPokemonListUseCase(StubPokemonApi),
-                        CachePokemonListUseCase(StubPokemonDao),
+                        getPokemonListUseCaseStub
                     ),
                 )
             }
@@ -214,6 +198,7 @@ private fun LightThemePreview() {
     }
 }
 
+@ExperimentalPagingApi
 @ExperimentalCoilApi
 @Preview(
     showBackground = true,
@@ -222,7 +207,6 @@ private fun LightThemePreview() {
 @Composable
 private fun DarkThemePreview() {
     PokedexAppThemePreview(darkTheme = true) {
-        val navController = rememberNavController()
         val entries = (0 until 4).map {
             PokemonEntry(
                 "Pokemon $it",
@@ -230,24 +214,18 @@ private fun DarkThemePreview() {
                 number = it,
             )
         }
-        val itemCount = if (entries.size % 2 == 0) {
-            entries.size / 2
-        } else {
-            entries.size / 2 + 1
-        }
+
         Column(
             modifier = Modifier
                 .background(MaterialTheme.colors.background)
                 .padding(32.dp)
         ) {
-            for (index in 0 until itemCount) {
+            for (index in entries.indices step 2) {
                 PokedexRow(
-                    rowIndex = index,
-                    entries = entries,
-                    navController = navController,
+                    first = entries[index],
+                    last = if (index + 1 >= entries.size) null else entries[index + 1],
                     viewModel = PokemonListViewModel(
-                        GetPokemonListUseCase(StubPokemonApi),
-                        CachePokemonListUseCase(StubPokemonDao),
+                        getPokemonListUseCaseStub,
                     ),
                 )
             }

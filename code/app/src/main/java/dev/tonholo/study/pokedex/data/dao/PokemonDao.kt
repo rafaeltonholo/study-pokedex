@@ -1,26 +1,25 @@
 package dev.tonholo.study.pokedex.data.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.paging.PagingSource
+import androidx.room.*
 import dev.tonholo.study.pokedex.data.entity.Pokemon
 import dev.tonholo.study.pokedex.data.entity.PokemonTypePair
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Dao
-abstract class PokemonDao {
+interface PokemonDao {
     @Transaction
     @Query("SELECT * FROM Pokemon")
-    abstract fun getPokemonWithType(): Flow<List<PokemonTypePair>>
+    fun getPokemonWithType(): PagingSource<Int, PokemonTypePair>
 
     @Insert
-    abstract suspend fun insert(pokemon: Pokemon): Long
+    suspend fun insert(pokemon: Pokemon): Long
 
     @Insert
-    abstract suspend fun insertAll(pokemonList: List<Pokemon>)
+    suspend fun insertAll(pokemonList: List<Pokemon>)
 
-    fun getPokemonWithTypeDistinctUntilChanged() =
-        getPokemonWithType().distinctUntilChanged()
+    @Query("DELETE FROM Pokemon")
+    suspend fun clearAll()
+
+    @Query("SELECT MAX(last_update) FROM Pokemon")
+    suspend fun lastUpdated(): Long?
 }

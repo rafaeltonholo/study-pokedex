@@ -1,34 +1,38 @@
 package dev.tonholo.study.pokedex.usecases
 
-import android.util.Log
-import dev.tonholo.study.pokedex.data.remote.PokeApi
-import dev.tonholo.study.pokedex.data.remote.responses.PokemonList
-import dev.tonholo.study.pokedex.usecases.base.UseCase
-import java.lang.Exception
+import androidx.paging.*
+import dev.tonholo.study.pokedex.data.dao.PokemonDao
+import dev.tonholo.study.pokedex.data.entity.PokemonTypePair
+import dev.tonholo.study.pokedex.data.model.PokemonEntry
+import dev.tonholo.study.pokedex.data.paging.PokemonListRemoteMediator
+import dev.tonholo.study.pokedex.screens.pokemonList.PAGE_SIZE
+import dev.tonholo.study.pokedex.usecases.base.UseCaseWithoutParamsSync
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-private const val TAG = "GetPokemonListUseCase"
-
+@ExperimentalPagingApi
 class GetPokemonListUseCase @Inject constructor(
-    private val pokeApi: PokeApi,
-): UseCase<GetPokemonListUseCase.Params, GetPokemonListUseCase.Result>() {
-    data class Params(
-        val limit: Int = 0,
-        val offset: Int = 0,
-    )
-
-    sealed class Result {
-        data class Success(val data: PokemonList): Result()
-        data class Failure(val message: String, val exception: Exception? = null): Result()
-    }
-
-    override suspend fun invoke(requestParams: Params): Result {
-        val (limit, offset) = requestParams
-        return try {
-            Result.Success(pokeApi.getPokemonList(limit, offset))
-        } catch (e: Exception) {
-            Log.e(TAG, "invoke: Unknown exception", e)
-            Result.Failure("An unknown error occurred.", e)
+    private val remoteMediator: RemoteMediator<Int, PokemonTypePair>,
+    private val pokemonDao: PokemonDao,
+) : UseCaseWithoutParamsSync<Flow<PagingData<PokemonEntry>>>() {
+    override fun invoke(): Flow<PagingData<PokemonEntry>> {
+        val pager = Pager(
+            config = PagingConfig(pageSize = PAGE_SIZE),
+            remoteMediator = remoteMediator,
+        ) {
+            pokemonDao.getPokemonWithType()
         }
+
+        return pager.flow
+            .map { pagingData ->
+                pagingData.map { (pokemon, _) ->
+                    PokemonEntry(
+                        pokemonName = pokemon.name,
+                        imageUrl = pokemon.spriteUrl,
+                        number = pokemon.number,
+                    )
+                }
+            }
     }
 }
