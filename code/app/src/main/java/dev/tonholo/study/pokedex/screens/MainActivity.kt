@@ -4,17 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.paging.ExperimentalPagingApi
 import coil.annotation.ExperimentalCoilApi
+import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import dagger.hilt.android.AndroidEntryPoint
+import dev.tonholo.study.pokedex.screens.destinations.PokemonDetailScreenDestination
+import dev.tonholo.study.pokedex.screens.destinations.PokemonListScreenDestination
 import dev.tonholo.study.pokedex.screens.pokemonDetail.PokemonDetailScreen
 import dev.tonholo.study.pokedex.screens.pokemonList.PokemonListScreen
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
@@ -27,49 +25,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PokedexAppTheme {
-                val navController = rememberNavController()
-                NavHost(
-                    navController = navController,
-                    startDestination = Routes.PokemonList.route,
-                ) {
-                    composable(Routes.PokemonList.route) {
+                DestinationsNavHost(navGraph = NavGraphs.root) {
+                    composable(PokemonListScreenDestination) {
                         window.statusBarColor = MaterialTheme.colors.background.toArgb()
-                        PokemonListScreen(navController)
+                        PokemonListScreen(
+                            navigator = destinationsNavigator,
+                        )
                     }
-                    composable(
-                        route = Routes.PokemonDetails.route,
-                        arguments = listOf(
-                            navArgument(Routes.PokemonDetails.Params.pokemonName) {
-                                type = NavType.StringType
-                            },
-                            navArgument(Routes.PokemonDetails.Params.dominantColor) {
-                                type = NavType.IntType
-                            }
-                        ),
-                    ) {
+                    composable(PokemonDetailScreenDestination) {
                         window.statusBarColor = Color.Black.toArgb()
-                        val pokemonName = remember {
-                            it.arguments?.getString(Routes.PokemonDetails.Params.pokemonName)
-                                ?: throw IllegalArgumentException(
-                                    "Can't access ${Routes.PokemonDetails.baseRoute} without ${
-                                        Routes.PokemonDetails.Params.pokemonName
-                                    } parameter"
-                                )
-                        }
-                        val dominantColor = remember {
-                            val color = it.arguments?.getInt(Routes.PokemonDetails.Params.dominantColor)
-                                ?: throw IllegalArgumentException(
-                                    "Can't access ${Routes.PokemonDetails.baseRoute} without ${
-                                        Routes.PokemonDetails.Params.dominantColor
-                                    } parameter"
-                                )
-                            Color(color)
-                        }
-
                         PokemonDetailScreen(
-                            dominantColor = dominantColor,
-                            pokemonName = pokemonName,
-                            navController = navController,
+                            navArgs = navArgs,
+                            navigator = destinationsNavigator,
                         )
                     }
                 }
