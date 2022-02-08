@@ -21,7 +21,7 @@ class GetPokemonDetailUseCase @Inject constructor(
      * @param requestParams The Pokemon's name
      */
     override suspend fun invoke(requestParams: String): Result = try {
-        Result.Success(pokeApi.getPokemon(requestParams))
+        Result.Success(pokeApi.getPokemon(requestParams.lowercase()))
     } catch (e: Exception) {
         Log.e(TAG, "invoke: Unknown exception", e)
         Result.Failure("An unknown error occurred.", e)
