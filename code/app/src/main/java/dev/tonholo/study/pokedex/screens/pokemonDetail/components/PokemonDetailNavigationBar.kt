@@ -16,16 +16,15 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.tonholo.study.pokedex.R
-import dev.tonholo.study.pokedex.ui.theme.PokedexAppTheme
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.ui.theme.Purple200
 
 @Composable
 fun PokemonDetailNavigationBar(
-    navController: NavController,
+    navigator: DestinationsNavigator,
     dominantColor: Color,
     modifier: Modifier = Modifier,
 ) {
@@ -40,7 +39,7 @@ fun PokemonDetailNavigationBar(
             )
     ) {
         IconButton(
-            onClick = { navController.popBackStack() },
+            onClick = { navigator.popBackStack() },
             modifier = Modifier
                 .offset(x = 16.dp, y = 16.dp),
         ) {
@@ -61,9 +60,8 @@ fun PokemonDetailNavigationBar(
 @Composable
 private fun LightThemePreview() {
     PokedexAppThemePreview(darkTheme = false) {
-        val navController = rememberNavController()
         PokemonDetailNavigationBar(
-            navController = navController,
+            navigator = EmptyDestinationsNavigator,
             dominantColor = Purple200,
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,9 +77,8 @@ private fun LightThemePreview() {
 @Composable
 private fun DarkThemePreview() {
     PokedexAppThemePreview(darkTheme = true) {
-        val navController = rememberNavController()
         PokemonDetailNavigationBar(
-            navController = navController,
+            navigator = EmptyDestinationsNavigator,
             dominantColor = Purple200,
             modifier = Modifier
                 .fillMaxWidth()

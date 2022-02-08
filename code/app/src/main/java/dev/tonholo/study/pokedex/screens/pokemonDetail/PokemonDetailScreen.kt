@@ -12,12 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.tonholo.study.pokedex.data.remote.PokeApi
 import dev.tonholo.study.pokedex.data.remote.responses.*
 import dev.tonholo.study.pokedex.screens.pokemonDetail.components.PokemonDetailNavigationBar
@@ -26,17 +28,30 @@ import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.ui.theme.Purple200
 import dev.tonholo.study.pokedex.usecases.GetPokemonDetailUseCase
 
+data class PokemonDetailScreenNavArgs(
+    val dominantColorInt: Int,
+    val pokemonName: String,
+) {
+    val dominantColor
+        get() = Color(dominantColorInt)
+}
+
 @Composable
+@Destination(
+    navArgsDelegate = PokemonDetailScreenNavArgs::class,
+)
 fun PokemonDetailScreen(
-    dominantColor: Color,
-    pokemonName: String,
-    navController: NavController,
+    navArgs: PokemonDetailScreenNavArgs,
+    navigator: DestinationsNavigator,
     topPadding: Dp = 20.dp,
     pokemonImageSize: Dp = 200.dp,
     viewModel: PokemonDetailViewModel = hiltViewModel(),
     initialState: GetPokemonDetailUseCase.Result = GetPokemonDetailUseCase.Result.IsLoading,
 ) {
-    val pokemonDetailState = produceState<GetPokemonDetailUseCase.Result>(
+    val (_, pokemonName) = navArgs
+    val dominantColor = navArgs.dominantColor
+
+    val pokemonDetailState = produceState(
         initialValue = initialState
     ) {
         value = viewModel.getPokemonDetail(pokemonName)
@@ -47,7 +62,7 @@ fun PokemonDetailScreen(
             .fillMaxSize()
     ) {
         PokemonDetailNavigationBar(
-            navController = navController,
+            navigator = navigator,
             dominantColor = dominantColor,
             modifier = Modifier
                 .fillMaxWidth()
@@ -88,11 +103,12 @@ fun PokemonDetailScreen(
 @Composable
 private fun LightThemePreview() {
     PokedexAppThemePreview(darkTheme = false) {
-        val navController = rememberNavController()
         PokemonDetailScreen(
-            dominantColor = Purple200,
-            pokemonName = "",
-            navController = navController,
+            PokemonDetailScreenNavArgs(
+                dominantColorInt = Purple200.toArgb(),
+                pokemonName = "",
+            ),
+            navigator = EmptyDestinationsNavigator,
             viewModel = buildPreviewViewModel(),
             initialState = GetPokemonDetailUseCase.Result.Success(
                 data = previewPokemon,
@@ -108,11 +124,12 @@ private fun LightThemePreview() {
 @Composable
 private fun DarkThemePreview() {
     PokedexAppThemePreview(darkTheme = true) {
-        val navController = rememberNavController()
         PokemonDetailScreen(
-            dominantColor = Purple200,
-            pokemonName = "",
-            navController = navController,
+            PokemonDetailScreenNavArgs(
+                dominantColorInt = Purple200.toArgb(),
+                pokemonName = "",
+            ),
+            navigator = EmptyDestinationsNavigator,
             viewModel = buildPreviewViewModel(),
             initialState = GetPokemonDetailUseCase.Result.Success(
                 data = previewPokemon,
