@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import dev.tonholo.study.pokedex.data.remote.responses.Pokemon
 import dev.tonholo.study.pokedex.data.remote.responses.Species
 import dev.tonholo.study.pokedex.data.remote.responses.Sprites
+import dev.tonholo.study.pokedex.data.remote.responses.StatX
+import dev.tonholo.study.pokedex.data.remote.responses.PokemonStat
 import dev.tonholo.study.pokedex.ui.theme.PokedexAppThemePreview
 import dev.tonholo.study.pokedex.usecases.GetPokemonDetailUseCase
 
@@ -112,7 +114,32 @@ private val previewPokemon = Pokemon(
         frontShiny = "mock",
         frontShinyFemale = "mock",
     ),
-    stats = listOf(),
+    stats = listOf(
+        PokemonStat(
+            baseStat = 100,
+            effort = 1,
+            stat = StatX(
+                name = "hp",
+                url = "",
+            )
+        ),
+        PokemonStat(
+            baseStat = 50,
+            effort = 1,
+            stat = StatX(
+                name = "attack",
+                url = "",
+            )
+        ),
+        PokemonStat(
+            baseStat = 75,
+            effort = 1,
+            stat = StatX(
+                name = "defense",
+                url = "",
+            )
+        )
+    ),
     types = listOf(),
     weight = 100,
 )
