@@ -16,10 +16,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import androidx.paging.ExperimentalPagingApi
 import coil.annotation.ExperimentalCoilApi
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.tonholo.study.pokedex.R
 import dev.tonholo.study.pokedex.screens.pokemonList.components.PokemonList
 import dev.tonholo.study.pokedex.screens.pokemonList.components.SearchBar
@@ -31,11 +32,14 @@ import dev.tonholo.study.pokedex.util.preview.stubs.getPokemonListUseCaseStub
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-@ExperimentalPagingApi
-@ExperimentalCoilApi
 @Composable
+@Destination(
+    start = true,
+)
+@ExperimentalCoilApi
+@ExperimentalPagingApi
 fun PokemonListScreen(
-    navController: NavController,
+    navigator: DestinationsNavigator,
     viewModel: PokemonListViewModel = hiltViewModel(),
     themeViewModel: ThemeViewModel = hiltViewModel(),
 ) {
@@ -77,7 +81,7 @@ fun PokemonListScreen(
                 }
             )
             PokemonList(
-                navController = navController,
+                navigator = navigator,
                 viewModel = viewModel,
             )
         }
@@ -90,9 +94,8 @@ fun PokemonListScreen(
 @Composable
 private fun LightThemePreview() {
     PokedexAppThemePreview {
-        val navController = rememberNavController()
         PokemonListScreen(
-            navController,
+            EmptyDestinationsNavigator,
             buildFakeViewModel(),
             buildPreviewThemeViewModel(ThemeState.Light),
         )
@@ -108,9 +111,8 @@ private fun LightThemePreview() {
 @Composable
 private fun DarkThemePreview() {
     PokedexAppThemePreview(darkTheme = true) {
-        val navController = rememberNavController()
         PokemonListScreen(
-            navController,
+            EmptyDestinationsNavigator,
             buildFakeViewModel(),
             buildPreviewThemeViewModel(ThemeState.Dark),
         )
