@@ -59,6 +59,17 @@ kapt {
     correctErrorTypes = true
 }
 
+kotlin {
+    sourceSets {
+        debug {
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        }
+        release {
+            kotlin.srcDir("build/generated/ksp/release/kotlin")
+        }
+    }
+}
+
 dependencies {
     implementation(Dependencies.AndroidX.coreKtx)
     implementation(Dependencies.Material.material)
@@ -88,6 +99,9 @@ dependencies {
 
     implementation(Dependencies.Jetpack.Paging.runtime)
     implementation(Dependencies.Jetpack.Paging.compose)
+
+    implementation(Dependencies.ComposeDestinations.core)
+    ksp(Dependencies.ComposeDestinations.ksp)
 
     // region [ Test dependencies ]
     testImplementation(Dependencies.JUnit.junit)

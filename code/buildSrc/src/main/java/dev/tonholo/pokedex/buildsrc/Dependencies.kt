@@ -16,6 +16,12 @@ object Dependencies {
         const val compose = "io.coil-kt:coil-compose:$version"
     }
 
+    object ComposeDestinations {
+        private const val version = "1.2.2-beta"
+        val core = "io.github.raamcosta.compose-destinations:core:$version"
+        val ksp = "io.github.raamcosta.compose-destinations:ksp:$version"
+    }
+
     object Kotlin {
         const val version = "1.5.31"
     }
