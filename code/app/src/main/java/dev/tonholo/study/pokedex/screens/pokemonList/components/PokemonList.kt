@@ -11,24 +11,22 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.annotation.ExperimentalCoilApi
-import dev.tonholo.study.pokedex.screens.Routes
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import dev.tonholo.study.pokedex.screens.destinations.PokemonDetailScreenDestination
 import dev.tonholo.study.pokedex.screens.pokemonList.PokemonListViewModel
-import kotlinx.coroutines.launch
 
 @ExperimentalPagingApi
 @ExperimentalCoilApi
 @Composable
 fun PokemonList(
-    navController: NavController,
+    navigator: DestinationsNavigator,
     viewModel: PokemonListViewModel = hiltViewModel(),
 ) {
     val lazyPagingItems = viewModel.pokemonList.collectAsLazyPagingItems()
@@ -36,7 +34,6 @@ fun PokemonList(
     val isSearching by remember { viewModel.isSearching }
     val isLoading by remember { viewModel.isLoading }
     val currentSearchingList by remember { viewModel.currentSearchingList }
-    val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
     LazyColumn(
@@ -56,12 +53,7 @@ fun PokemonList(
                         first = first,
                         last = secondEntry,
                     ) { entry, dominantColor ->
-                        coroutineScope.launch {
-                            listState.scrollToItem(index)
-                        }
-                        navController.navigate(
-                            Routes.PokemonDetails.build(entry.pokemonName, dominantColor)
-                        )
+                        navigator.navigate(PokemonDetailScreenDestination(dominantColor, entry.pokemonName))
                     }
                 }
             }
