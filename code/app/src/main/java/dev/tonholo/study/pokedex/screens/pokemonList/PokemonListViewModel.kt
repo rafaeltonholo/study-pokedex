@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
+import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tonholo.study.pokedex.data.model.PokemonEntry
@@ -28,7 +29,7 @@ class PokemonListViewModel @Inject constructor(
     val isLoading = mutableStateOf(false)
     val loadingError = mutableStateOf("")
     val isSearching = mutableStateOf(false)
-    val pokemonList = getPokemonListUseCase()
+    val pokemonList = getPokemonListUseCase().cachedIn(viewModelScope)
 
     var currentSearchingList = mutableStateOf(listOf<PokemonEntry>())
     private var cachedPokemonList = listOf<PokemonEntry>()
